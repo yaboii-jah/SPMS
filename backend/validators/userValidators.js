@@ -1,9 +1,9 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import { errorResponse } from "../utils/responseFormat.js";
 
 export const userValidator = {
-  fname : 
-    body ('fname')
+  first_name : 
+    body ('first_name')
       .exists().withMessage('Fistname do not exist')
       .trim()
       .notEmpty().withMessage('No Value Provided on Firstname')
@@ -11,8 +11,8 @@ export const userValidator = {
       .isAlpha('en-US', { ignore : ['-', "'"]} )
     ,
 
-  lname : 
-    body ('lname')
+  last_name : 
+    body ('last_name')
       .exists().withMessage('Lastname do not exist')
       .trim()
       .notEmpty().withMessage('No Value Provided on Lastname')
@@ -20,8 +20,8 @@ export const userValidator = {
       .isAlpha('en-US', { ignore : ['-', "'"]} )
     ,
 
-  mname : 
-    body ('mname')
+  middle_name : 
+    body ('middle_name')
       .optional()
       .trim()
       .notEmpty().withMessage('No Value Provided on Middlename')
@@ -37,29 +37,28 @@ export const userValidator = {
       .isString().withMessage('Department must be a string')
     ,
 
-  supervisor : 
-    body ('supervisor')
+  supervisor_division_chief : 
+    body ('supervisor_division_chief')
       .exists().withMessage('Supervisor do not exist')
       .trim()
       .notEmpty().withMessage('Invalid Value on Supervisor')
       .isString().withMessage('Supervisor must be a string')
     ,
 
-  office_head : 
-    body ('office_head')
+  office_director : 
+    body ('office_director')
       .exists().withMessage('Office Head do not exist')
       .trim()
       .notEmpty().withMessage('Invalid Value on Office Head')
       .isString().withMessage('Office Head must be a string')
     ,
 
-  email : 
-    body ('email')
-      .exists().withMessage('Email do not exist')
+  username : 
+    body ('username')
+      .exists().withMessage('Username do not exist')
       .trim()
-      .notEmpty().withMessage('Invalid Value on Email')
-      .isEmail().withMessage('must be a valid Email')
-      .normalizeEmail()
+      .notEmpty().withMessage('Invalid Value on Username')
+      .isString().withMessage('Username must be a string')
     ,
 
   password : 
@@ -76,7 +75,7 @@ export async function logInValidator (req, res, next) {
   const validators = []
 
   for (const field of fields) {
-    if (field === 'email' || field === 'password') {
+    if (field === 'username' || field === 'password') {
       validators.push(userValidator[field])
     }
   }
@@ -91,3 +90,32 @@ export async function logInValidator (req, res, next) {
 
   next()
 }
+
+export async function updateValidator (req, res, next) {
+  const fields = Object.keys(req.body);
+  
+  const validators = []
+
+  for (const field of fields) {
+    validators.push(userValidator[field])
+  }
+
+  if (validators.length === 0) { 
+    return res.status(422).send(new errorResponse(false, 'Invalid fields to Check', 'NO_VALID_FIELDS'))
+  }
+  
+  for (const validator of validators) {
+    await validator.run(req)
+  }
+
+  next()
+}
+
+export const routeParamsValidator = [
+  param('id')
+    .exists().withMessage('Please provide id')
+    .trim()
+    .isInt().withMessage('User ID must be integer')
+    .toInt().withMessage('Invalid value for User ID')
+]
+

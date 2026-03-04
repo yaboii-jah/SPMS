@@ -1,9 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-import cookieParser from 'cookie-parser';
-import session from 'express-session';
-import passport from 'passport';
+//import cookieParser from 'cookie-parser';
+//import session from 'express-session';
+//import passport from 'passport';
 import { routes as authRoutes } from './routes/authRoute.js';
 
 const app = express();

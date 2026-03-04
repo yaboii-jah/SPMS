@@ -4,6 +4,6 @@ export async function errorHandler (asyncOperation) {
     return { success : true, data : result }
   } catch ( error ) {
     console.log(error)
-    return { success : false }
+    return { success : false, message : error || "Something went wrong" }
   }
 }
