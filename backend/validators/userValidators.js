@@ -37,22 +37,6 @@ export const userValidator = {
       .isString().withMessage('Department must be a string')
     ,
 
-  supervisor_division_chief : 
-    body ('supervisor_division_chief')
-      .exists().withMessage('Supervisor do not exist')
-      .trim()
-      .notEmpty().withMessage('Invalid Value on Supervisor')
-      .isString().withMessage('Supervisor must be a string')
-    ,
-
-  office_director : 
-    body ('office_director')
-      .exists().withMessage('Office Head do not exist')
-      .trim()
-      .notEmpty().withMessage('Invalid Value on Office Head')
-      .isString().withMessage('Office Head must be a string')
-    ,
-
   username : 
     body ('username')
       .exists().withMessage('Username do not exist')
@@ -93,15 +77,16 @@ export async function logInValidator (req, res, next) {
 
 export async function updateValidator (req, res, next) {
   const fields = Object.keys(req.body);
+  const required = Object.keys(userValidator)
   
   const validators = []
 
-  for (const field of fields) {
-    validators.push(userValidator[field])
+  if (!fields.every(req => required.includes(req))) {
+    return res.status(422).send(new errorResponse(false, 'Invalid fields to Check', 'NO_VALID_FIELDS'))
   }
 
-  if (validators.length === 0) { 
-    return res.status(422).send(new errorResponse(false, 'Invalid fields to Check', 'NO_VALID_FIELDS'))
+  for (const field of fields) {
+    validators.push(userValidator[field])
   }
   
   for (const validator of validators) {
@@ -118,4 +103,6 @@ export const routeParamsValidator = [
     .isInt().withMessage('User ID must be integer')
     .toInt().withMessage('Invalid value for User ID')
 ]
+
+
 
