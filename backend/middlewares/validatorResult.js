@@ -7,7 +7,7 @@ export function validationResultChecker(req, res, next) {
   if (error.isEmpty()) {
     return next();
   }
-  
+
    const formattedErrors = error.array().reduce((acc, currentError) => {
     if (!acc[currentError.path]) {
       acc[currentError.path] = [];

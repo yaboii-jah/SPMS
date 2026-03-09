@@ -1,7 +1,7 @@
 import { body, param } from "express-validator";
 import { errorResponse } from "../utils/responseFormat.js";
 
-export const userValidator = {
+export const intialValidators = {
   first_name : 
     body ('first_name')
       .exists().withMessage('Fistname do not exist')
@@ -20,6 +20,14 @@ export const userValidator = {
       .isAlpha('en-US', { ignore : ['-', "'"]} )
     ,
 
+  department :
+    body ('department')
+      .exists().withMessage('Department do not exist')
+      .trim()
+      .notEmpty().withMessage('Invalid Value on Department')
+      .isString().withMessage('Department must be string')
+  ,
+
   middle_name : 
     body ('middle_name')
       .optional()
@@ -27,30 +35,6 @@ export const userValidator = {
       .notEmpty().withMessage('No Value Provided on Middlename')
       .isString().withMessage('Middlename must be a string')
       .isAlpha('en-US', { ignore : ['-', "'"]} )
-    ,
-
-  department : 
-    body ('department')
-      .exists().withMessage('Department do not exist')
-      .trim()
-      .notEmpty().withMessage('Invalid Value on Department')
-      .isString().withMessage('Department must be a string')
-    ,
-
-  supervisor_division_chief : 
-    body ('supervisor_division_chief')
-      .exists().withMessage('Supervisor do not exist')
-      .trim()
-      .notEmpty().withMessage('Invalid Value on Supervisor')
-      .isString().withMessage('Supervisor must be a string')
-    ,
-
-  office_director : 
-    body ('office_director')
-      .exists().withMessage('Office Head do not exist')
-      .trim()
-      .notEmpty().withMessage('Invalid Value on Office Head')
-      .isString().withMessage('Office Head must be a string')
     ,
 
   username : 
@@ -67,7 +51,98 @@ export const userValidator = {
       .trim()
       .notEmpty().withMessage('Invalid Value on Password')
       .isString().withMessage('Password must be a string')
-}  
+  ,   
+  role : 
+    body ('role')
+      .exists().withMessage('role do not exist')
+      .trim()
+      .notEmpty().withMessage('Invalid Value on role')
+      .isString().withMessage('role must be a string')
+}
+
+export async function userValidator (req, res, next) {
+
+    if ( req.body.role === 'IPCR') {
+      intialValidators['supervisor_division_chief'] = 
+        body('supervisor_division_chief')
+          .exists().withMessage('supervisor_division_chief do not exist')
+          .trim()
+          .notEmpty().withMessage('Invalid Value on supervisor_division_chief')
+          .isString().withMessage('supervisor_division_chief must be string')
+
+      intialValidators['office_director'] = 
+        body('office_director')
+          .exists().withMessage('office_director do not exist')
+          .trim()
+          .notEmpty().withMessage('Invalid Value on office_director')
+          .isString().withMessage('office_director must be string')
+    }
+
+    if (req.body.role === 'DPCR') {
+      intialValidators['commissioner'] =
+        body('commissioner')
+          .exists().withMessage('commissioner do not exist')
+          .trim()
+          .notEmpty().withMessage('Invalid Value on commissioner')
+          .isString().withMessage('commissioner must be string')
+
+      intialValidators['alloted_budget'] = 
+        body('alloted_budget')
+          .exists().withMessage('alloted_budget do not exist')
+          .trim()
+          .notEmpty().withMessage('Invalid Value on alloted_budget')
+          .isString().withMessage('alloted_budget must be string')
+
+      intialValidators['accountable'] = 
+        body('accountable')
+          .exists().withMessage('accountable do not exist')
+          .trim()
+          .notEmpty().withMessage('Invalid Value on accountable')
+          .isString().withMessage('accountable must be string')
+
+      intialValidators['office_director'] = 
+        body ('office_director')
+          .exists().withMessage('office_director do not exist')
+          .trim()
+          .notEmpty().withMessage('Invalid Value on office_director')
+          .isString().withMessage('office_director must be string')
+    }
+
+    if ( req.body.role === 'OPCR') {
+      intialValidators['commissioner'] =
+        body('commissioner')
+          .exists().withMessage('commissioner do not exist')
+          .trim()
+          .notEmpty().withMessage('Invalid Value on commissioner')
+          .isString().withMessage('commissioner must be string')
+
+      intialValidators['alloted_budget'] = 
+        body('alloted_budget')
+          .exists().withMessage('alloted_budget do not exist')
+          .trim()
+          .notEmpty().withMessage('Invalid Value on alloted_budget')
+          .isString().withMessage('alloted_budget must be string')
+
+      intialValidators['accountable'] = 
+        body('accountable')
+          .exists().withMessage('accountable do not exist')
+          .trim()
+          .notEmpty().withMessage('Invalid Value on accountable')
+          .isString().withMessage('accountable must be string')
+
+      intialValidators['chairperson'] = 
+        body('chairperson')
+          .exists().withMessage('chairperson do not exist')
+          .trim()
+          .notEmpty().withMessage('Invalid Value on chairperson')
+          .isString().withMessage('chairperson must be string')
+    }
+
+  for ( const validator of Object.values(intialValidators)) {
+    await validator.run(req)
+  }
+  next()
+}
 
 export async function logInValidator (req, res, next) {
   const fields = Object.keys(req.body);
@@ -76,7 +151,7 @@ export async function logInValidator (req, res, next) {
 
   for (const field of fields) {
     if (field === 'username' || field === 'password') {
-      validators.push(userValidator[field])
+      validators.push(intialValidators[field])
     }
   }
 
@@ -93,15 +168,16 @@ export async function logInValidator (req, res, next) {
 
 export async function updateValidator (req, res, next) {
   const fields = Object.keys(req.body);
+  const required = Object.keys(intialValidators)
   
   const validators = []
 
-  for (const field of fields) {
-    validators.push(userValidator[field])
+  if (!fields.every(req => required.includes(req))) {
+    return res.status(422).send(new errorResponse(false, 'Invalid fields to Check', 'NO_VALID_FIELDS'))
   }
 
-  if (validators.length === 0) { 
-    return res.status(422).send(new errorResponse(false, 'Invalid fields to Check', 'NO_VALID_FIELDS'))
+  for (const field of fields) {
+    validators.push(intialValidators[field])
   }
   
   for (const validator of validators) {
@@ -118,4 +194,6 @@ export const routeParamsValidator = [
     .isInt().withMessage('User ID must be integer')
     .toInt().withMessage('Invalid value for User ID')
 ]
+
+
 
