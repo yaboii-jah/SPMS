@@ -60,85 +60,52 @@ export const intialValidators = {
       .isString().withMessage('role must be a string')
 }
 
+function additionalValidator (role) {
+  const addedValidators = {}
+
+  if ( role === 'IPCR' || role === 'DPCR') {
+    addedValidators['office_director'] = 
+      body('office_director')
+        .exists().withMessage('office_director do not exist')
+        .trim()
+        .notEmpty().withMessage('Invalid Value on office_director')
+        .isString().withMessage('office_director must be string')
+  }
+
+  if ( role === 'IPCR') {
+    addedValidators['supervisor_division_chief'] = 
+      body('supervisor_division_chief')
+        .exists().withMessage('supervisor_division_chief do not exist')
+        .trim()
+        .notEmpty().withMessage('Invalid Value on supervisor_division_chief')
+        .isString().withMessage('supervisor_division_chief must be string')
+  }
+  
+  if ( role === 'DPCR' || role === 'OPCR') {
+    addedValidators['commissioner'] =
+      body('commissioner')
+        .exists().withMessage('commissioner do not exist')
+        .trim()
+        .notEmpty().withMessage('Invalid Value on commissioner')
+        .isString().withMessage('commissioner must be string')
+  }
+
+  if ( role === 'OPCR') {
+    addedValidators['chairperson'] = 
+      body('chairperson')
+        .exists().withMessage('chairperson do not exist')
+        .trim()
+        .notEmpty().withMessage('Invalid Value on chairperson')
+        .isString().withMessage('chairperson must be string')
+  }
+
+  return addedValidators
+}
+
 export async function userValidator (req, res, next) {
+  const validatorsCopy = {...intialValidators, ...additionalValidator(req.body.role)} 
 
-    if ( req.body.role === 'IPCR') {
-      intialValidators['supervisor_division_chief'] = 
-        body('supervisor_division_chief')
-          .exists().withMessage('supervisor_division_chief do not exist')
-          .trim()
-          .notEmpty().withMessage('Invalid Value on supervisor_division_chief')
-          .isString().withMessage('supervisor_division_chief must be string')
-
-      intialValidators['office_director'] = 
-        body('office_director')
-          .exists().withMessage('office_director do not exist')
-          .trim()
-          .notEmpty().withMessage('Invalid Value on office_director')
-          .isString().withMessage('office_director must be string')
-    }
-
-    if (req.body.role === 'DPCR') {
-      intialValidators['commissioner'] =
-        body('commissioner')
-          .exists().withMessage('commissioner do not exist')
-          .trim()
-          .notEmpty().withMessage('Invalid Value on commissioner')
-          .isString().withMessage('commissioner must be string')
-
-      intialValidators['alloted_budget'] = 
-        body('alloted_budget')
-          .exists().withMessage('alloted_budget do not exist')
-          .trim()
-          .notEmpty().withMessage('Invalid Value on alloted_budget')
-          .isString().withMessage('alloted_budget must be string')
-
-      intialValidators['accountable'] = 
-        body('accountable')
-          .exists().withMessage('accountable do not exist')
-          .trim()
-          .notEmpty().withMessage('Invalid Value on accountable')
-          .isString().withMessage('accountable must be string')
-
-      intialValidators['office_director'] = 
-        body ('office_director')
-          .exists().withMessage('office_director do not exist')
-          .trim()
-          .notEmpty().withMessage('Invalid Value on office_director')
-          .isString().withMessage('office_director must be string')
-    }
-
-    if ( req.body.role === 'OPCR') {
-      intialValidators['commissioner'] =
-        body('commissioner')
-          .exists().withMessage('commissioner do not exist')
-          .trim()
-          .notEmpty().withMessage('Invalid Value on commissioner')
-          .isString().withMessage('commissioner must be string')
-
-      intialValidators['alloted_budget'] = 
-        body('alloted_budget')
-          .exists().withMessage('alloted_budget do not exist')
-          .trim()
-          .notEmpty().withMessage('Invalid Value on alloted_budget')
-          .isString().withMessage('alloted_budget must be string')
-
-      intialValidators['accountable'] = 
-        body('accountable')
-          .exists().withMessage('accountable do not exist')
-          .trim()
-          .notEmpty().withMessage('Invalid Value on accountable')
-          .isString().withMessage('accountable must be string')
-
-      intialValidators['chairperson'] = 
-        body('chairperson')
-          .exists().withMessage('chairperson do not exist')
-          .trim()
-          .notEmpty().withMessage('Invalid Value on chairperson')
-          .isString().withMessage('chairperson must be string')
-    }
-
-  for ( const validator of Object.values(intialValidators)) {
+  for ( const validator of Object.values(validatorsCopy)) {
     await validator.run(req)
   }
   next()
@@ -167,8 +134,8 @@ export async function logInValidator (req, res, next) {
 }
 
 export async function updateValidator (req, res, next) {
+  const required = {...intialValidators, ...additionalValidator(req.body.role)} 
   const fields = Object.keys(req.body);
-  const required = Object.keys(intialValidators)
   
   const validators = []
 
@@ -177,7 +144,7 @@ export async function updateValidator (req, res, next) {
   }
 
   for (const field of fields) {
-    validators.push(intialValidators[field])
+    validators.push(required[field])
   }
   
   for (const validator of validators) {
@@ -194,6 +161,7 @@ export const routeParamsValidator = [
     .isInt().withMessage('User ID must be integer')
     .toInt().withMessage('Invalid value for User ID')
 ]
+
 
 
 

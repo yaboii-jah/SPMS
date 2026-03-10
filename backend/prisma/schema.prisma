@@ -8,23 +8,19 @@ datasource db {
 }
 
 model users {
-  user_id                   Int           @id @default(autoincrement())
-  first_name                String        @db.VarChar(45)
-  last_name                 String        @db.VarChar(45)
-  middle_name               String?       @db.VarChar(45)
-  department                String        @db.VarChar(45)
-  supervisor_division_chief String?       @db.VarChar(45)
-  office_director           String?       @db.VarChar(45)
-  created_at                DateTime      @default(now()) @db.DateTime(0)
-  password                  String        @db.VarChar(100)
-  username                  String        @unique(map: "username_UNIQUE") @db.VarChar(100)
-  role                      String        @db.VarChar(45)
-  userscol                  String?       @db.VarChar(45)
-  commissioner              String?       @db.VarChar(45)
-  alloted_budget            String?       @db.VarChar(45)
-  accountable               String?       @db.VarChar(45)
-  chairperson               String?       @db.VarChar(45)
-  performance               performance[]
+  user_id                   Int      @id @default(autoincrement())
+  first_name                String   @db.VarChar(45)
+  last_name                 String   @db.VarChar(45)
+  middle_name               String?  @db.VarChar(45)
+  department                String   @db.VarChar(45)
+  supervisor_division_chief String?  @db.VarChar(45)
+  office_director           String?  @db.VarChar(45)
+  created_at                DateTime @default(now()) @db.DateTime(0)
+  password                  String   @db.VarChar(100)
+  username                  String   @unique(map: "username_UNIQUE") @db.VarChar(100)
+  role                      String   @db.VarChar(45)
+  commissioner              String?  @db.VarChar(45)
+  chairperson               String?  @db.VarChar(45)
 }
 
 model performance {
@@ -32,7 +28,7 @@ model performance {
   key_perf                            String  @db.VarChar(255)
   succes_indic                        String  @db.Text
   alloted_budget                      String? @db.VarChar(45)
-  division_individuals_accountable    String? @db.VarChar(255)
+  division_individuals_accountable    String? @default("None") @db.VarChar(255)
   actual_accomp                       String  @db.Text
   quality                             Int
   efficiency                          Int
@@ -41,7 +37,6 @@ model performance {
   category                            String  @db.VarChar(45)
   training_developmental_intervention String? @default("None") @db.VarChar(255)
   user_id                             Int
-  users                               users   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "user_id")
 
   @@index([user_id], map: "user_id_idx")
 }
