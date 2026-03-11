@@ -10,5 +10,5 @@ import { verifyToken } from "../middlewares/userAuthenticate.js";
 export const routes = new Router ();
 
 routes.post('/register', bodyValidator, userValidator, validationResultChecker, hashPassword, registerUser)
-routes.post('/login', logInValidator, logIn)
-routes.post('/update/:id', verifyToken, bodyValidator, routeParamsValidator, updateValidator, validationResultChecker, checkEquality, hashPassword, update) 
+routes.post('/login', bodyValidator, logInValidator, validationResultChecker, logIn)
+routes.patch('/update/:id', verifyToken, bodyValidator, routeParamsValidator, updateValidator, validationResultChecker, checkEquality, hashPassword, update) 

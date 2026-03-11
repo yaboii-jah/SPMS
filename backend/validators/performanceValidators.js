@@ -31,7 +31,7 @@ export const intialValidators = {
             .exists().withMessage('quality do not exist')
             .trim()
             .notEmpty().withMessage('No Value Provided on quality')
-            .isString().withMessage('quality must be a string')
+            .isInt().withMessage('quality must be a number')
     ,
     
     efficiency : 
@@ -39,7 +39,7 @@ export const intialValidators = {
             .exists().withMessage('efficiency do not exist')
             .trim()
             .notEmpty().withMessage('No Value Provided on efficiency')
-            .isString().withMessage('efficiency must be a string')
+            .isInt().withMessage('efficiency must be a number')
     ,
 
     timeliness : 
@@ -47,11 +47,14 @@ export const intialValidators = {
             .exists().withMessage('timeliness do not exist')
             .trim()
             .notEmpty().withMessage('No Value Provided on timeliness')
-            .isString().withMessage('timeliness must be a string')
+            .isInt().withMessage('timeliness must be a number')
     ,
 
     remarks : 
         body ('remarks')
+            .optional()
+            .trim()
+            .notEmpty().withMessage('no value provided on remarks')
             .isString().withMessage('remarks must be a string')
     ,
 
@@ -65,6 +68,9 @@ export const intialValidators = {
 
     training_developmental_intervention : 
         body ('training_developmental_intervention')
+            .optional()
+            .trim()
+            .notEmpty().withMessage('no value provided on training_developmental_intervention ')
             .isString().withMessage('training_developmental_intervention must be a string')
     ,
 
