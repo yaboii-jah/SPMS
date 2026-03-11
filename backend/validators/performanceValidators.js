@@ -3,7 +3,7 @@ import { errorResponse } from "../utils/responseFormat.js";
 
 export const intialValidators = {
     key_perf : 
-        body ('key_perf')
+        body ('*.key_perf')
             .exists().withMessage('Key Performance do not exist')
             .trim()
             .notEmpty().withMessage('No Value Provided on Key Performance')
@@ -11,7 +11,7 @@ export const intialValidators = {
     , 
 
     sucess_indic: 
-        body ('sucess_indic')
+        body ('*.sucess_indic')
             .exists().withMessage('Success Indicator do not exist')
             .trim()
             .notEmpty().withMessage('No Value Provided on Success Indicator')
@@ -19,7 +19,7 @@ export const intialValidators = {
     ,
     
     actual_accomp :
-        body ('actual_accomp')
+        body ('*.actual_accomp')
             .exists().withMessage('actual_accomp do not exist')
             .trim()
             .notEmpty().withMessage('No Value Provided on actual_accomp')
@@ -27,7 +27,7 @@ export const intialValidators = {
     ,
 
     quality : 
-        body ('quality')
+        body ('*.quality')
             .exists().withMessage('quality do not exist')
             .trim()
             .notEmpty().withMessage('No Value Provided on quality')
@@ -35,7 +35,7 @@ export const intialValidators = {
     ,
     
     efficiency : 
-        body ('efficiency')
+        body ('*.efficiency')
             .exists().withMessage('efficiency do not exist')
             .trim()
             .notEmpty().withMessage('No Value Provided on efficiency')
@@ -43,7 +43,7 @@ export const intialValidators = {
     ,
 
     timeliness : 
-        body ('timeliness')
+        body ('*.timeliness')
             .exists().withMessage('timeliness do not exist')
             .trim()
             .notEmpty().withMessage('No Value Provided on timeliness')
@@ -51,7 +51,7 @@ export const intialValidators = {
     ,
 
     remarks : 
-        body ('remarks')
+        body ('*.remarks')
             .optional()
             .trim()
             .notEmpty().withMessage('no value provided on remarks')
@@ -59,7 +59,7 @@ export const intialValidators = {
     ,
 
     category :
-        body ('category')
+        body ('*.category')
             .exists().withMessage('category do not exist')
             .trim()
             .notEmpty().withMessage('No Value Provided on category')
@@ -67,7 +67,7 @@ export const intialValidators = {
     ,
 
     training_developmental_intervention : 
-        body ('training_developmental_intervention')
+        body ('*.training_developmental_intervention')
             .optional()
             .trim()
             .notEmpty().withMessage('no value provided on training_developmental_intervention ')
@@ -75,7 +75,7 @@ export const intialValidators = {
     ,
 
     user_id : 
-        body ('user_id')
+        body ('*.user_id')
             .exists().withMessage('user_id do not exist')
             .trim()
             .notEmpty().withMessage('No Value Provided on user_id')
@@ -88,13 +88,13 @@ function additionalValidator (role) {
 
   if (role === 'DPCR' || role === 'OPCR') {
     addedValidators['alloted_budget'] = 
-        body ('alloted_budget')
+        body ('*.alloted_budget')
             .exists().withMessage('Alloted Number do not exist')
             .notEmpty().withMessage('No Value Provided on Alloted Number')
             .isInt().withMessage('Alloted Number must be a Number')
 
     addedValidators['division_individuals_accountable'] =
-        body ('division_individuals_accountable')
+        body ('*.division_individuals_accountable')
             .exists().withMessage('division_individuals_accountable do not exist')
             .trim()
             .notEmpty().withMessage('No Value Provided on division_individuals_accountable')

@@ -10,5 +10,5 @@ export const routes = new Router ();
 
 routes.use(verifyToken)
 routes.post('/add', bodyValidator, performanceValidator, validationResultChecker, add)
-routes.patch('/update', updateValidator, validationResultChecker, update)
+routes.patch('/update', bodyValidator, updateValidator, validationResultChecker, update)
 
