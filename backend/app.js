@@ -4,7 +4,6 @@ import morgan from 'morgan';
 import { routes as authRoutes } from './routes/authRoute.js';
 import { routes as performanceRoutes } from './routes/performanceRoute.js';
 
-
 const app = express();
 
 app.use(cors())

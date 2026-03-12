@@ -1,7 +1,8 @@
 
 import { errorResponse, successResponse } from '../utils/responseFormat.js';
-import { createUser, updateUser, findUser, comparePassword } from '../services/authServices.js';
+import { createUser, updateUser, findUser, comparePassword, fetchUserDetails } from '../services/authServices.js';
 import { generateAccessToken } from '../utils/generateToken.js';
+import { errorHandler } from '../utils/asyncErrorHandler.js';
 
 export async function registerUser (req, res) {
   const result = await createUser(req.body)
@@ -46,5 +47,11 @@ export async function update (req, res) {
   } 
 
   res.status(200).send(new successResponse(true, result.data, 'User Updated Successfully'))
+}
+
+export async function fetchUser (req, res) {
+    const result = await errorHandler(() => fetchUserDetails(req.user.user_id))
+
+    res.status(200).send(new successResponse(true, result.data, 'User Successfully Retrieved'))
 }
 

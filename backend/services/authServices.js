@@ -32,3 +32,11 @@ export async function comparePassword (password, userPassword) {
 
     return result
 }
+
+export async function fetchUserDetails (user_id) {
+    return prisma.users.findUnique({
+        where :{
+            user_id
+        }
+    })
+}

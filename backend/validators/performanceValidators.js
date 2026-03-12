@@ -10,8 +10,8 @@ export const intialValidators = {
             .isString().withMessage('Key Performance must be a string')
     , 
 
-    sucess_indic: 
-        body ('*.sucess_indic')
+    succes_indic: 
+        body ('*.succes_indic')
             .exists().withMessage('Success Indicator do not exist')
             .trim()
             .notEmpty().withMessage('No Value Provided on Success Indicator')
@@ -74,13 +74,20 @@ export const intialValidators = {
             .isString().withMessage('training_developmental_intervention must be a string')
     ,
 
-    user_id : 
-        body ('*.user_id')
-            .exists().withMessage('user_id do not exist')
+    performance_id : 
+        body ('*.performance_id')
+            .optional()
             .trim()
             .notEmpty().withMessage('No Value Provided on user_id')
             .isInt().withMessage('user_id must be a Int')
     ,
+
+    action :
+        body ('*.action')
+            .optional()
+            .trim()
+            .notEmpty().withMessage('No Value Provided on user_id')
+            .isString().withMessage('user_id must be a String')
 }
 
 function additionalValidator (role) {
@@ -115,21 +122,24 @@ export async function performanceValidator (req, res, next) {
 }
 
 export async function updateValidator (req, res, next) {
-  const fields = Object.keys(req.body);
+  const fields = (req.body);
   const required = {...intialValidators, ...additionalValidator(req.user.role)}
-  
   const validators = []
 
-  if (!fields.every(req => required.includes(req))) {
-    return res.status(422).send(new errorResponse(false, 'Invalid fields to Check', 'NO_VALID_FIELDS'))
-  }
-
   for (const field of fields) {
-    validators.push(required[field])
-  }
-  
-  for (const validator of validators) {
-    await validator.run(req)
+    if (!Object.keys(field).every(req => Object.keys(required).includes(req))) {
+        return res.status(422).send(new errorResponse(false, 'Invalid fields to Check', 'NO_VALID_FIELDS'))
+    }
+
+    validators.push(
+        Object.keys(field).map(validator => {
+            return required[validator]
+        })
+    )
+
+    for (const validator of validators[0]) {
+        await validator.run(field)
+    }
   }
 
   next()
