@@ -1,0 +1,63 @@
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  border: 2px solid black;
+  width: 100%;
+  border-radius: 20px;
+  margin-top: 25px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.upper {
+    display: flex;
+    gap: 20px;
+}
+
+.key_perf{
+    height: 40px;
+    width: 300px;
+    border-radius: 10px;
+}
+
+.category {
+    height: 46px;
+    width: 309px;
+    border-radius: 10px;
+}
+
+.middle {
+    display: flex;
+    gap: 20px;
+}
+
+.success_indic, .actual_accomp {
+   height: 160px;
+   width: 300px;
+   border-radius: 10px;
+}
+
+.bottom {
+    display: flex;
+    gap: 10px; 
+    align-items: center;
+    justify-content: space-between;
+    width: 260px;
+}
+
+.bottom div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.quality, .efficiency, .timeliness {
+    width: 40px;
+    height: 25px;   
+    border-radius: 8px;
+}
+
+
+

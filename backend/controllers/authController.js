@@ -16,9 +16,9 @@ export async function registerUser (req, res) {
 
 export async function logIn (req, res) {
   const { username, password} = req.body
-
+  console.log(req.body)
   const result = await findUser(username)
-  
+  console.log(result)
   if (!result.data || !result.success) {
     return res.status(404).send(new errorResponse(false, result.message, "USER_NOT_FOUND"))
   }
