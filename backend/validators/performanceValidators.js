@@ -29,7 +29,6 @@ export const intialValidators = {
     quality : 
         body ('*.quality')
             .exists().withMessage('quality do not exist')
-            .trim()
             .notEmpty().withMessage('No Value Provided on quality')
             .isInt().withMessage('quality must be a number')
     ,
@@ -37,7 +36,6 @@ export const intialValidators = {
     efficiency : 
         body ('*.efficiency')
             .exists().withMessage('efficiency do not exist')
-            .trim()
             .notEmpty().withMessage('No Value Provided on efficiency')
             .isInt().withMessage('efficiency must be a number')
     ,
@@ -45,7 +43,6 @@ export const intialValidators = {
     timeliness : 
         body ('*.timeliness')
             .exists().withMessage('timeliness do not exist')
-            .trim()
             .notEmpty().withMessage('No Value Provided on timeliness')
             .isInt().withMessage('timeliness must be a number')
     ,
@@ -113,11 +110,13 @@ function additionalValidator (role) {
 
 
 export async function performanceValidator (req, res, next) {
+  console.log(req.body)
   const validatorsCopy = {...intialValidators, ...additionalValidator(req.user.role)}
 
   for ( const validator of Object.values(validatorsCopy)) {
     await validator.run(req)
   }
+  console.log(req.body)
   next()
 }
 

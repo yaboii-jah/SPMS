@@ -1,7 +1,11 @@
 import prisma from "../connection/prismaClient.js";
 
 export async function addPerformance (performance, user_id, tx = prisma) {
-   performance.forEach(perf => perf['user_id'] = Number(user_id))
+   performance.forEach(perf => {
+      perf['user_id'] = Number(user_id)
+      delete perf['id']
+   })
+
    await tx.performance.createMany({
         data : performance
    })
@@ -57,6 +61,7 @@ export async function dynamicQuery (data, user_id) {
       if (form.action === 'create') {
          delete form['express-validator#contexts']
          delete form.action
+         delete form.id
          dataToCreate.push(form)
       }
    }

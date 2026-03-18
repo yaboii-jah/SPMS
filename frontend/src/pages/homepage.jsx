@@ -5,7 +5,6 @@ export function Homepage () {
     return (
         <>
             <title>Login</title>
-
             <div className="homepage">
                 <Header/>
                 <div className='cards'>

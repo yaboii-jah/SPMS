@@ -11,6 +11,12 @@
   padding-bottom: 20px;
 }
 
+.exit {
+  display: flex;
+  width: 100%;
+  justify-content: end;
+}
+
 .upper {
     display: flex;
     gap: 20px;
@@ -33,7 +39,7 @@
     gap: 20px;
 }
 
-.success_indic, .actual_accomp {
+.succes_indic, .actual_accomp {
    height: 160px;
    width: 300px;
    border-radius: 10px;
