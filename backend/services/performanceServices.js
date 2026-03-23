@@ -51,7 +51,8 @@ export async function dynamicQuery (data, user_id) {
       if (form.action === 'update' && userData.some(data => data.performance_id === form.performance_id) ) {
          delete form.action
          delete form['express-validator#contexts']
-         dataToUpdate.push(form)
+         delete form.id
+         dataToUpdate.push({...form})
       }
 
       if (form.action === 'delete' && userData.some(data => data.performance_id === form.performance_id)) {
@@ -65,6 +66,10 @@ export async function dynamicQuery (data, user_id) {
          dataToCreate.push(form)
       }
    }
+
+   console.log(dataToUpdate)
+   console.log(dataToDelete)
+   console.log(dataToCreate)
 
    return await prisma.$transaction(async (tx)=> {
       

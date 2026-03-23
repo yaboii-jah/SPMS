@@ -75,16 +75,23 @@ export const intialValidators = {
         body ('*.performance_id')
             .optional()
             .trim()
-            .notEmpty().withMessage('No Value Provided on user_id')
-            .isInt().withMessage('user_id must be a Int')
+            .notEmpty().withMessage('No Value Provided on performance_id')
+            .isInt().withMessage('performance_id must be a int')
     ,
 
     action :
         body ('*.action')
             .optional()
             .trim()
-            .notEmpty().withMessage('No Value Provided on user_id')
-            .isString().withMessage('user_id must be a String')
+            .notEmpty().withMessage('No Value Provided on action')
+            .isString().withMessage('action must be a String'),
+    
+    id :
+        body ('*.id')
+            .optional()
+            .trim()
+            .notEmpty().withMessage('No Value Provided on id')
+            .isString().withMessage('id must be a String')
 }
 
 function additionalValidator (role) {
@@ -104,19 +111,17 @@ function additionalValidator (role) {
             .notEmpty().withMessage('No Value Provided on division_individuals_accountable')
             .isString().withMessage('division_individuals_accountable must be a string')
   }
-
+  
   return addedValidators
 }
 
 
 export async function performanceValidator (req, res, next) {
-  console.log(req.body)
   const validatorsCopy = {...intialValidators, ...additionalValidator(req.user.role)}
 
   for ( const validator of Object.values(validatorsCopy)) {
     await validator.run(req)
   }
-  console.log(req.body)
   next()
 }
 
@@ -140,7 +145,6 @@ export async function updateValidator (req, res, next) {
         await validator.run(field)
     }
   }
-
   next()
 }
 
