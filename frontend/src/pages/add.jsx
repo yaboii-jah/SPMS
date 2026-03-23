@@ -14,6 +14,7 @@ export function Add () {
             quality : 0,
             efficiency : 0,
             timeliness : 0,
+            avg_per_form : 0,
             id: crypto.randomUUID()
         }
     ])
@@ -27,12 +28,14 @@ export function Add () {
             quality : 0,
             efficiency : 0,
             timeliness : 0,
+            avg_per_form : 0,
             id: crypto.randomUUID()
         }])
     }
 
     function submitPerformance () {
-        addPerformance(userData)
+        console.log(userData)
+       // addPerformance(userData)
     }
     
     return (
@@ -54,11 +57,52 @@ export function Add () {
                     }) || ''
                 } 
                 <button className='add-more-btn' onClick={addForm}>Add more</button>
-                <button className='submit-btn' onClick={submitPerformance}>Submit</button>
+                <div className='btns'> 
+                    <div>
+                        <p>Average Rating </p>
+                        <p>4.42</p>
+                    </div>
+                    <button className='submit-btn' onClick={submitPerformance}>Submit</button>
+                </div>
+            
+            <div className='rating-tables'>  
+                <table className='rating'>
+                    <tr>
+                        <th>Category</th>
+                        <th>ASSIGNED WEIGHT</th>
+                        <th>FINAL RATING</th>
+                    </tr>
+                    <tr>
+                        <td>Strategic Priority</td>
+                        <td>30%</td>
+                        <td>1.35</td>
+                    </tr>
+                    <tr>
+                        <td>Core/Suppoert Functions</td>
+                        <td>70%</td>
+                        <td>3.06</td>
+                    </tr>
+                    <tr>
+                        <td>Unplanned Results</td>
+                        <td></td>
+                        <td>0.00</td>
+                    </tr>
+                </table>
+
+                <table>
+                    <tr>
+                        <th>Total Overall Rating</th>
+                        <td>4.41</td>
+                    </tr>
+                    <tr>
+                        <th>Adjective Rating</th>
+                        <td>VERY SATISFACTORY</td>
+                    </tr>
+                </table>
             </div>
 
 
-            
+            </div>
         </>
 
     )

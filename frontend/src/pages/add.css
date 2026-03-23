@@ -15,3 +15,38 @@
 .add-more-btn {
     width: 100%;
 }
+
+.btns {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btns div {
+    display: flex;
+    gap: 15px;
+}
+
+.rating-tables {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+}
+
+.rating {
+    margin-top: 10px;
+    width: 100%;
+    gap: 20px;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+td {
+    text-align: center;
+}

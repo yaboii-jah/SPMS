@@ -69,7 +69,6 @@ export function Update () {
                             <UpdateForm
                                 setUserData={setUserData}
                                 form={form}
-                                request={request}
                                 setRequest={setRequest}
                                 key={form.id}
                             />
