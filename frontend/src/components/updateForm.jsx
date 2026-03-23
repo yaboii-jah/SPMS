@@ -1,6 +1,8 @@
 import '../components/addForm.css'
 
-export function UpdateForm ({ setUserData, form, setRequest}) {
+export function UpdateForm ({setUserData, form, request, setRequest}) {
+    console.log(request)
+    const dataCopy =  [...request]
     function handleChange (e) {
         let { name, value } = e.target
 
@@ -9,14 +11,22 @@ export function UpdateForm ({ setUserData, form, setRequest}) {
         }
        
         setUserData(prev => prev.map( f => 
-            f.id === form.id ? {...f, [name] : value}  : f
-            
+            f.id === form.id ? {...f, [name] : value}  : f    
         ))
 
         setRequest(prev => prev.map( r => 
             r.id === form.id ? {...r, [name] : value} : r
         ))
         
+        dataCopy.forEach((c) => {
+            if (c.id !== form.id) {
+                setRequest([...request, { id : crypto.randomUUID(), performance_id : form['performance_id'], action : 'update', [name] : value}])
+            } else {
+                setRequest(prev => prev.map( r => 
+                    r.id === c.id ? {...r, [name] : value} : r
+                ))
+            }
+        })
     }
 
     function deleteForm () {
@@ -25,8 +35,6 @@ export function UpdateForm ({ setUserData, form, setRequest}) {
             [...prev, { ['performance_id'] : form['performance_id'], ['action'] : 'delete'}] :
             prev.filter(r => r.id !== form.id))
     }
-
-
 
     return (    
         <div className="form-container">

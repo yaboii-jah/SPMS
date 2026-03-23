@@ -2,6 +2,7 @@ import '../pages/add.css'
 import { useEffect, useState } from 'react';
 import { Header } from '../components/header';
 import { UpdateForm } from '../components/updateForm';
+import { updatePerformance } from '../api/update';
 
 export function Update () {
     const [userData, setUserData] = useState([]);
@@ -12,7 +13,7 @@ export function Update () {
             const data = await fetch('http://localhost:3005/performance/api/fetchSpms', {
             method : 'GET',
             headers : {
-                "Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMCwicm9sZSI6IklQQ1IiLCJpYXQiOjE3NzM4MzIwNTksImV4cCI6MTc3MzgzNTY1OX0.oAzoEfYGafT14yS_IpyX377fzBdyu-YPCfem_Y_6LOg`,
+                "Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMCwicm9sZSI6IklQQ1IiLCJpYXQiOjE3NzQyMjQ3NDksImV4cCI6MTc3NDMxMTE0OX0.x2gZD_5MLd1zMuIx5G235LL7tAEnSXcbZf64K5kBwj8`,
                 "Content-Type" : "application/json"
             }
         })
@@ -52,11 +53,12 @@ export function Update () {
         }])
     }
 
-    function view() {
-        console.log(request)
+    async function view() {
+        const result =  await updatePerformance(request)
+        console.log(result)
     }
 
-    return (
+    return (    
         <>
             <title>Update</title>
             <Header/>
@@ -67,6 +69,7 @@ export function Update () {
                             <UpdateForm
                                 setUserData={setUserData}
                                 form={form}
+                                request={request}
                                 setRequest={setRequest}
                                 key={form.id}
                             />
