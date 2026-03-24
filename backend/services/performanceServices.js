@@ -67,10 +67,6 @@ export async function dynamicQuery (data, user_id) {
       }
    }
 
-   console.log(dataToUpdate)
-   console.log(dataToDelete)
-   console.log(dataToCreate)
-
    return await prisma.$transaction(async (tx)=> {
       
       if (dataToDelete.length > 0 ) {

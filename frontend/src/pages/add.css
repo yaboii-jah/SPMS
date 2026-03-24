@@ -41,6 +41,11 @@
     gap: 20px;
 }
 
+.assigned_weight {
+    text-align: center;
+    border: none;
+}
+
 table, th, td {
   border: 1px solid black;
   border-collapse: collapse;

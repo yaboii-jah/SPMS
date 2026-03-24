@@ -1,18 +1,17 @@
 import '../components/addForm.css'
 
-export function AddForm ({setUserData, form}) {
+export function AddForm ({avg, setUserData, form}) {
     function handleChange (e) {
         let { name, value } = e.target
-        
-        if (Number(value)) {
+
+        if (name === 'efficiency' || name === 'quality' || name ===  'timeliness') {
             value = Number(value)
         }
-
+        
         setUserData(prev => prev.map( f => 
-            f.id === form.id ? {...f, [name] : value, ['avg_per_form'] : form.quality + form.timeliness + form.efficiency}  : f
-        )) 
+            f.id === form.id ? {...f, [name] : value} : f
+        ))          
     }
-
     function deleteForm () {
         setUserData(prev => prev.filter(f => f.id !== form.id))
     }
@@ -39,19 +38,19 @@ export function AddForm ({setUserData, form}) {
             <div className='bottom'>
                 <div>
                     <label htmlFor="">Q</label>
-                    <input value={form.quality} type="number" className='quality' name='quality' onChange={handleChange} min={0}/>
+                    <input value={form.quality} type="number" className='quality' name='quality' onChange={handleChange} min={0} max={5}/>
                 </div>
                 <div>
                    <label htmlFor="">E</label>
-                   <input value={form.efficiency} type="number" className='efficiency' name='efficiency' onChange={handleChange} min={0}/>  
-                </div>
+                   <input value={form.efficiency} type="number" className='efficiency' name='efficiency' onChange={handleChange} min={0} max={5}/>  
+                </div>  
                 <div>
                     <label htmlFor="">T</label>
-                    <input value={form.timeliness} type="number" className='timeliness' name='timeliness' onChange={handleChange} min={0}/>
+                    <input value={form.timeliness} type="number" className='timeliness' name='timeliness' onChange={handleChange} min={0} max={5}/>
                 </div>
                 <div>
                     <label htmlFor="">A</label>
-                    <input value={form.avg_per_form} type="number" className='timeliness' name='timeliness' onChange={handleChange} readOnly/>
+                    <input value={avg} type="number" className='timeliness' name='timeliness' onChange={handleChange} readOnly/>
                 </div>
             </div>
         </div>
