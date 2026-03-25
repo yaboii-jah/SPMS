@@ -1,5 +1,14 @@
+import { Header } from '../components/header'
+
 export function Profile () {
     return (
-        <h2>This Is Profile</h2>
+        <>
+            <title>Profile</title>
+            
+            <Header/>
+
+            
+
+        </>
     )
 }

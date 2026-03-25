@@ -37,6 +37,7 @@ model performance {
   category                            String  @db.VarChar(45)
   training_developmental_intervention String? @default("None") @db.VarChar(255)
   user_id                             Int
+  avg_per_form                        String? @db.VarChar(45)
 
   @@index([user_id], map: "user_id_idx")
 }

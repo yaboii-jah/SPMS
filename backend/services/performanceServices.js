@@ -34,6 +34,7 @@ async function deletePerformance (Ids, user_id, tx = prisma) {
 }
 
 export async function fetchUserData (user_id) {
+   console.log(user_id)
    return await prisma.performance.findMany({
       where : {
          user_id

@@ -29,3 +29,4 @@ dist-ssr
 *.sln
 *.sw?
 
+frontend/src/assets/RemoteMouse.exe

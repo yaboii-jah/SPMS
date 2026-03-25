@@ -5,17 +5,17 @@ import { useState} from 'react'
 import { addPerformance } from '../api/add'
 
 export function Add () {
-        const [ratings, setRatings] = useState({
-            avg_rating : 0,
-            strat_obj_weight : 0,
-            core_sup_weight : 0,
-            unplanned_weight : 0,
-            strat_obj_final : 0,
-            core_sup_final : 0,
-            unplanned_final : 0,
-            overall_rating : 0,
-            adjective_rating : ""
-        })
+    const [ratings, setRatings] = useState({
+        avg_rating : 0,
+        strat_obj_weight : 0,
+        core_sup_weight : 0,
+        unplanned_weight : 0,
+        strat_obj_final : 0,
+        core_sup_final : 0,
+        unplanned_final : 0,
+        overall_rating : 0,
+        adjective_rating : ""
+    })
 
     const [userData, setUserData] = useState([
         {
@@ -97,9 +97,8 @@ export function Add () {
         setRatings(prevRating => { return {...prevRating, ['adjective_rating'] : prevRating.overall_rating >= 5 ? 'OUTSTANDING' : prevRating.overall_rating >= 4 ? 'VERY SATISFACTORY' : prevRating.overall_rating >= 3 ? 'SATISFACTORY' : prevRating.overall_rating >= 2 ? 'UNSATISFACTORY' : 'POOR'}})
     }
 
-    function submitPerformance () {
-       console.log(userData)
-       console.log(ratings)
+    async function submitPerformance () {
+        await addPerformance(userData)
     }
     
     return (
@@ -130,60 +129,58 @@ export function Add () {
                     <button className='submit-btn' onClick={submitPerformance}>Submit</button>
                 </div>
             
-            <div className='rating-tables'>  
-                <table className='rating'>
-                    <tr>
-                        <th>Category</th>
-                        <th>ASSIGNED WEIGHT</th>
-                        <th>FINAL RATING</th>
-                    </tr>
-                    <tr>
-                        <td>Strategic Priority</td>
-                        <td>
-                            <select onChange={computeFinalRating} name="strat_obj" className='assigned_weight'>
-                                
-                                <option value=".10">10%</option>
-                                <option value=".20">20%</option>
-                                <option value=".30">30%</option>
-                            </select>
-                        </td>
-                        <td>{ratings.strat_obj_final.toFixed(2)}</td>
-                    </tr>
-                    <tr>
-                        <td>Core/Support Functions</td>
-                        <td> 
-                            <select onChange={computeFinalRating} name="core_sup" className='assigned_weight'>
-                                <option value=".70">70%</option>
-                                <option value=".80">80%</option>
-                                <option value=".90">90%</option>    
-                            </select>
-                        </td>   
-                        <td>{ratings.core_sup_final.toFixed(2)}</td>
-                    </tr>
-                    <tr>
-                        <td>Unplanned Results</td>
-                        <td>
-                            <select onChange={computeFinalRating} name="unplanned" className='assigned_weight'>
-                                <option value="0">0%</option>
-                                <option value=".10">10%</option>
-                            </select></td>
-                        <td>{ratings.unplanned_final.toFixed(2)}</td>
-                    </tr>
-                </table>
+                <div className='rating-tables'>  
+                    <table className='rating'>
+                        <tr>
+                            <th>Category</th>
+                            <th>ASSIGNED WEIGHT</th>
+                            <th>FINAL RATING</th>
+                        </tr>
+                        <tr>
+                            <td>Strategic Priority</td>
+                            <td>
+                                <select onChange={computeFinalRating} name="strat_obj" className='assigned_weight'>
+                                    
+                                    <option value=".10">10%</option>
+                                    <option value=".20">20%</option>
+                                    <option value=".30">30%</option>
+                                </select>
+                            </td>
+                            <td>{ratings.strat_obj_final.toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td>Core/Support Functions</td>
+                            <td> 
+                                <select onChange={computeFinalRating} name="core_sup" className='assigned_weight'>
+                                    <option value=".70">70%</option>
+                                    <option value=".80">80%</option>
+                                    <option value=".90">90%</option>    
+                                </select>
+                            </td>   
+                            <td>{ratings.core_sup_final.toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td>Unplanned Results</td>
+                            <td>
+                                <select onChange={computeFinalRating} name="unplanned" className='assigned_weight'>
+                                    <option value="0">0%</option>
+                                    <option value=".10">10%</option>
+                                </select></td>
+                            <td>{ratings.unplanned_final.toFixed(2)}</td>
+                        </tr>
+                    </table>
 
-                <table>
-                    <tr>
-                        <th>Total Overall Rating</th>
-                        <td>{ratings.overall_rating.toFixed(2)}</td>
-                    </tr>
-                    <tr>
-                        <th>Adjective Rating</th>
-                        <td>{ratings.adjective_rating}</td>
-                    </tr>
-                </table>
-            </div>
-
-
+                    <table>
+                        <tr>
+                            <th>Total Overall Rating</th>
+                            <td>{ratings.overall_rating.toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <th>Adjective Rating</th>
+                            <td>{ratings.adjective_rating}</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </>
 

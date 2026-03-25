@@ -1,6 +1,6 @@
 import '../components/addForm.css'
 
-export function UpdateForm ({setUserData, form, setRequest}) {
+export function UpdateForm ({avg, setUserData, form, setRequest}) {
 
     function handleChange (e) {
         let { name, value } = e.target
@@ -76,6 +76,10 @@ export function UpdateForm ({setUserData, form, setRequest}) {
                 <div>
                     <label htmlFor="">T</label>
                     <input value={form.timeliness} type="number" className='timeliness' name='timeliness' onChange={handleChange} />
+                </div>
+                <div>
+                    <label htmlFor="">A</label>
+                    <input value={avg} type="number" className='timeliness' name='timeliness' onChange={handleChange} readOnly/>
                 </div>
             </div>
         </div>
