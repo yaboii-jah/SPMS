@@ -8,15 +8,15 @@ export function Update () {
     const [userData, setUserData] = useState([]);
     const [request, setRequest] = useState([]);
     const [ratings, setRatings] = useState({
-        avg_rating : 0,
-        strat_obj_weight : 0,
-        core_sup_weight : 0,
-        unplanned_weight : 0,
-        strat_obj_final : 0,
-        core_sup_final : 0,
-        unplanned_final : 0,
-        overall_rating : 0,
-        adjective_rating : ""
+        avg_rating : 4.42,
+        strat_obj_weight : 0.30,
+        core_sup_weight : 0.70,
+        unplanned_weight : 0.00,
+        strat_obj_final : 1.35,
+        core_sup_final : 3.06,
+        unplanned_final : 0.00,
+        overall_rating : 4.41,
+        adjective_rating : "VERY SATISFACTORY"
     })
 
     useEffect(() => {
@@ -121,6 +121,7 @@ export function Update () {
 
     async function updatePerformance() {
         //const result =  await updatePerformance(request)
+        console.log(userData)
         console.log(request)
     }
 
@@ -161,11 +162,10 @@ export function Update () {
                         <tr>
                             <td>Strategic Priority</td>
                             <td>
-                                <select onChange={computeFinalRating} name="strat_obj" className='assigned_weight'>
-                                    
-                                    <option value=".10">10%</option>
-                                    <option value=".20">20%</option>
-                                    <option value=".30">30%</option>
+                                <select onChange={computeFinalRating} value={String(ratings.strat_obj_weight)} name="strat_obj" className='assigned_weight'>
+                                    <option value="0.1">10%</option>
+                                    <option value="0.2">20%</option>
+                                    <option value="0.3">30%</option>
                                 </select>
                             </td>
                             <td>{ratings.strat_obj_final.toFixed(2)}</td>
@@ -173,10 +173,10 @@ export function Update () {
                         <tr>
                             <td>Core/Support Functions</td>
                             <td> 
-                                <select onChange={computeFinalRating} name="core_sup" className='assigned_weight'>
-                                    <option value=".70">70%</option>
-                                    <option value=".80">80%</option>
-                                    <option value=".90">90%</option>    
+                                <select onChange={computeFinalRating} value={String(ratings.core_sup_weight)} name="core_sup" className='assigned_weight'>
+                                    <option value="0.7">70%</option>
+                                    <option value="0.8">80%</option>
+                                    <option value="0.9">90%</option>    
                                 </select>
                             </td>   
                             <td>{ratings.core_sup_final.toFixed(2)}</td>
@@ -184,9 +184,9 @@ export function Update () {
                         <tr>
                             <td>Unplanned Results</td>
                             <td>
-                                <select onChange={computeFinalRating} name="unplanned" className='assigned_weight'>
+                                <select onChange={computeFinalRating} value={String(ratings.unplanned_weight)} name="unplanned" className='assigned_weight'>
                                     <option value="0">0%</option>
-                                    <option value=".10">10%</option>
+                                    <option value="0.1">10%</option>
                                 </select></td>
                             <td>{ratings.unplanned_final.toFixed(2)}</td>
                         </tr>

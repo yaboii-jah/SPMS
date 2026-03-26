@@ -1,11 +1,10 @@
 import '../components/addForm.css'
 
 export function UpdateForm ({avg, setUserData, form, setRequest}) {
-
     function handleChange (e) {
         let { name, value } = e.target
 
-        if (Number(value)) {
+        if (name === 'efficiency' || name === 'quality' || name ===  'timeliness') {
             value = Number(value)
         }
        
@@ -64,22 +63,23 @@ export function UpdateForm ({avg, setUserData, form, setRequest}) {
                 <input value={form.actual_accomp} type="text" className='actual_accomp' name='actual_accomp'onChange={handleChange} />
             </div>
 
+
             <div className='bottom'>
                 <div>
                     <label htmlFor="">Q</label>
-                    <input value={form.quality} type="number" className='quality' name='quality' onChange={handleChange}/>
+                    <input value={form.quality} type="number" className='quality' name='quality' onChange={handleChange} min={0} max={5}/>
                 </div>
                 <div>
                    <label htmlFor="">E</label>
-                   <input value={form.efficiency} type="number" className='efficiency' name='efficiency' onChange={handleChange}/>  
+                   <input value={form.efficiency} type="number" className='efficiency' name='efficiency' onChange={handleChange} min={0} max={5}/>  
                 </div>
                 <div>
                     <label htmlFor="">T</label>
-                    <input value={form.timeliness} type="number" className='timeliness' name='timeliness' onChange={handleChange} />
+                    <input value={form.timeliness} type="number" className='timeliness' name='timeliness' onChange={handleChange} min={0} max={5}/>
                 </div>
                 <div>
                     <label htmlFor="">A</label>
-                    <input value={avg} type="number" className='timeliness' name='timeliness' onChange={handleChange} readOnly/>
+                    <input value={avg} type="number" className='timeliness' name='avg_per_form'readOnly/>
                 </div>
             </div>
         </div>

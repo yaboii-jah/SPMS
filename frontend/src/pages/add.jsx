@@ -52,6 +52,7 @@ export function Add () {
         if (form.timeliness !== 0) {
             count++;
             sum += form.timeliness;
+
         }
         if (form.quality !== 0) {
             count++;
@@ -64,14 +65,13 @@ export function Add () {
 
         if (count === 0) return 0;
          
-        return String(sum / count);
+        return String((sum / count).toFixed(2));
     }
 
-    function computeAvg (userData) {
+    function computeAvgRating (userData) {
         let avgSum = 0
         let rowNum = 0
         userData.forEach(data => {
-           data['avg_per_form'] = computeFormAvg(data)
            avgSum += Number(data['avg_per_form'])
            rowNum++
         })
@@ -82,7 +82,9 @@ export function Add () {
     function computeFinalRating (e) {
         let avgSum = 0
         let rowNum = 0
-        let dataCopy = [...userData]
+        let dataCopy = userData.map(data => (
+            {...data}
+        ))
 
         dataCopy.forEach(data => {
             if (data.category === e.target.name) {
@@ -92,13 +94,15 @@ export function Add () {
             }
         })
         
-        setRatings(prevRating => { return {...prevRating, ['avg_rating'] : computeAvg([...userData]).toFixed(2),  [`${e.target.name}_final`] : Number(avgSum / rowNum) ?(avgSum / rowNum) * Number(e.target.value) : 0, [`${e.target.name}_weight`] : e.target.value}})
+        setRatings(prevRating => { return {...prevRating, ['avg_rating'] : computeAvgRating([...userData]).toFixed(2),  [`${e.target.name}_final`] : Number(avgSum / rowNum) ?(avgSum / rowNum) * Number(e.target.value) : 0, [`${e.target.name}_weight`] : e.target.value}})
         setRatings(prevRating => { return {...prevRating, ['overall_rating'] : prevRating['core_sup_final'] + prevRating['strat_obj_final'] + prevRating['unplanned_final']}})
         setRatings(prevRating => { return {...prevRating, ['adjective_rating'] : prevRating.overall_rating >= 5 ? 'OUTSTANDING' : prevRating.overall_rating >= 4 ? 'VERY SATISFACTORY' : prevRating.overall_rating >= 3 ? 'SATISFACTORY' : prevRating.overall_rating >= 2 ? 'UNSATISFACTORY' : 'POOR'}})
     }
 
     async function submitPerformance () {
-        await addPerformance(userData)
+        //await addPerformance(userData)
+        console.log(userData)
+        console.log(ratings)
     }
     
     return (
@@ -112,7 +116,7 @@ export function Add () {
                     Array.isArray(userData) && userData.map(form => {
                         return (
                             <AddForm
-                                avg={computeFormAvg(form)}
+                                computeFormAvg={computeFormAvg}
                                 setUserData={setUserData}
                                 form={form}
                                 key={form.id}
@@ -124,7 +128,7 @@ export function Add () {
                 <div className='btns'> 
                     <div>
                         <p>Average Rating </p>
-                        <p>{computeAvg([...userData]).toFixed(2)}</p>
+                        <p>{computeAvgRating(userData).toFixed(2)}</p>
                     </div>
                     <button className='submit-btn' onClick={submitPerformance}>Submit</button>
                 </div>
