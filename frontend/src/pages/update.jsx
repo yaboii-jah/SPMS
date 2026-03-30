@@ -1,10 +1,14 @@
 import '../pages/add.css'
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer} from 'react';
 import { Header } from '../components/header';
 import { UpdateForm } from '../components/updateForm';
 import { updatePerformance } from '../api/update';
+import { initialState, reducer } from '../features/updateReducer'
 
 export function Update () {
+  
+    const [state, dispatch] = useReducer(reducer, initialState);
+
     const [userData, setUserData] = useState([]);
     const [request, setRequest] = useState([]);
     const [ratings, setRatings] = useState({
@@ -18,6 +22,8 @@ export function Update () {
         overall_rating : 4.41,
         adjective_rating : "VERY SATISFACTORY"
     })
+
+    
 
     useEffect(() => {
         async function fetchUserData ()  {
