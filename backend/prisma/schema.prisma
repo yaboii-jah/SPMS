@@ -41,3 +41,19 @@ model performance {
 
   @@index([user_id], map: "user_id_idx")
 }
+
+model ratings {
+  rating_id        Int     @id
+  avg_rating       Decimal @default(0.00) @db.Decimal(3, 2)
+  strat_obj_weight Decimal @default(0.00) @db.Decimal(3, 2)
+  core_sup_weight  Decimal @default(0.00) @db.Decimal(3, 2)
+  unplanned_weight Decimal @default(0.00) @db.Decimal(3, 2)
+  strat_obj_final  Decimal @default(0.00) @db.Decimal(3, 2)
+  core_sup_final   Decimal @default(0.00) @db.Decimal(3, 2)
+  unplanned_final  Decimal @default(0.00) @db.Decimal(3, 2)
+  overall_rating   Decimal @default(0.00) @db.Decimal(3, 2)
+  adjective_rating String  @db.VarChar(50)
+  user_id          Int
+
+  @@index([user_id], map: "user_id_idx")
+}
