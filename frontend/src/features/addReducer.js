@@ -64,7 +64,7 @@ export function reducer(state, action) {
             userDataCopy = userDataCopy.filter(f => f.id !== action.payload.id)
 
             let ratingsCopy = {...state.ratings, ['avg_rating'] : action.payload.computeRating(userDataCopy).toFixed(2), ['strat_obj_final'] : computeFinalRating(userDataCopy, state.ratings['strat_obj_weight'], 'strat_obj'),
-                ['core_sup_final'] : computeFinalRating(userDataCopy, state.ratings['core_sup_weight'], 'core_sup'), ['uplanned_final'] : computeFinalRating(userDataCopy, state.ratings['unplanned_weight'], 'unplanned')
+                ['core_sup_final'] : computeFinalRating(userDataCopy, state.ratings['core_sup_weight'], 'core_sup'), ['unplanned_final'] : computeFinalRating(userDataCopy, state.ratings['unplanned_weight'], 'unplanned')
             }
 
             ratingsCopy = {...ratingsCopy, ['overall_rating'] : ratingsCopy['core_sup_final'] + ratingsCopy['strat_obj_final'] + ratingsCopy['unplanned_final']}
@@ -88,7 +88,7 @@ export function reducer(state, action) {
             )
 
             let ratingsCopy = {...state.ratings, ['avg_rating'] : action.payload.computeRating(userDataCopy).toFixed(2), ['strat_obj_final'] : computeFinalRating(userDataCopy, state.ratings['strat_obj_weight'], 'strat_obj'),
-                ['core_sup_final'] : computeFinalRating(userDataCopy, state.ratings['core_sup_weight'], 'core_sup'), ['uplanned_final'] : computeFinalRating(userDataCopy, state.ratings['unplanned_weight'], 'unplanned')
+                ['core_sup_final'] : computeFinalRating(userDataCopy, state.ratings['core_sup_weight'], 'core_sup'), ['unplanned_final'] : computeFinalRating(userDataCopy, state.ratings['unplanned_weight'], 'unplanned')
             }
 
             ratingsCopy = {...ratingsCopy, ['overall_rating'] : ratingsCopy['core_sup_final'] + ratingsCopy['strat_obj_final'] + ratingsCopy['unplanned_final']}

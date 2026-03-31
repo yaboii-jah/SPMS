@@ -2,7 +2,7 @@ import '../pages/add.css'
 import { Header } from '../components/header'
 import { AddForm } from '../components/addForm'
 import { useReducer } from 'react'
-import { addPerformance } from '../api/add'
+import { addPerformance, addRatings} from '../api/add'
 import { initialState, reducer } from '../features/addReducer'
 
 export function Add () {
@@ -65,9 +65,8 @@ export function Add () {
     }
 
     async function submitPerformance () {
-        //await addPerformance(userData)
-        console.log(state.userData)
-        console.log(state.ratings)
+        await addPerformance(state.userData)
+        await addRatings(state.ratings)
     }
     
     return (

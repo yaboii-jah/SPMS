@@ -43,7 +43,7 @@ model performance {
 }
 
 model ratings {
-  rating_id        Int     @id
+  rating_id        Int     @id @default(autoincrement())
   avg_rating       Decimal @default(0.00) @db.Decimal(3, 2)
   strat_obj_weight Decimal @default(0.00) @db.Decimal(3, 2)
   core_sup_weight  Decimal @default(0.00) @db.Decimal(3, 2)

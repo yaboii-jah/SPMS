@@ -76,7 +76,7 @@ export const intialValidators = {
             .optional()
             .trim()
             .notEmpty().withMessage('No Value Provided on performance_id')
-            .isInt().withMessage('performance_id must be a int')
+            .isInt().withMessage('performance_id must be a number')
     ,
 
     action :
@@ -91,7 +91,13 @@ export const intialValidators = {
             .optional()
             .trim()
             .notEmpty().withMessage('No Value Provided on id')
-            .isString().withMessage('id must be a String')
+            .isString().withMessage('id must be a String'),
+
+    avg_per_form  :
+        body ('*.avg_per_form')
+            .exists().withMessage('avg_per_form do not exist')
+            .notEmpty().withMessage('No Value Provided on avg_per_form')
+            .isString().withMessage('avg_per_form must be a string')
 }
 
 function additionalValidator (role) {

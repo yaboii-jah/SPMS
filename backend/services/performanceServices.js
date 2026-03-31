@@ -43,13 +43,11 @@ export async function fetchUserData (user_id) {
 }
 
 export async function fetchUserRatings (user_id) {
-   let rating = await prisma.ratings.findMany({
+   return await prisma.ratings.findMany({
       where : {
          user_id 
       }
   })
-
-  // fix the issue where decimal values turn into string when the client received the data
 }
 
 export async function dynamicQuery (data, user_id) {

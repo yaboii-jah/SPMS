@@ -2,43 +2,47 @@ import '../pages/add.css'
 import { useEffect, useReducer} from 'react';
 import { Header } from '../components/header';
 import { UpdateForm } from '../components/updateForm';
-import { updatePerformance } from '../api/update';
+import { updatePerformance, updateRatings } from '../api/update';
 import { initialState, reducer } from '../features/updateReducer'
 
 export function Update () {
   
     const [state, dispatch] = useReducer(reducer, initialState);
 
-    const [userData, setUserData] = useState([]);
-    const [request, setRequest] = useState([]);
-    const [ratings, setRatings] = useState({
-        avg_rating : 4.42,
-        strat_obj_weight : 0.30,
-        core_sup_weight : 0.70,
-        unplanned_weight : 0.00,
-        strat_obj_final : 1.35,
-        core_sup_final : 3.06,
-        unplanned_final : 0.00,
-        overall_rating : 4.41,
-        adjective_rating : "VERY SATISFACTORY"
-    })
-
-    
-
     useEffect(() => {
         async function fetchUserData ()  {
-            const data = await fetch('http://localhost:3005/performance/api/fetchSpms', {
-            method : 'GET',
-            headers : {
-                "Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMCwicm9sZSI6IklQQ1IiLCJpYXQiOjE3NzQ0MjI2NDcsImV4cCI6MTc3NDUwOTA0N30.wMcaFy_XPcf_o-23-UsmKv_jWToEivzBORklDOT4Syg`,
-                "Content-Type" : "application/json"
+            let data = await fetch('http://localhost:3005/performance/api/fetchSpms', {
+                method : 'GET',
+                headers : {
+                    "Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMCwicm9sZSI6IklQQ1IiLCJpYXQiOjE3NzQ5MTY4OTcsImV4cCI6MTc3NTAwMzI5N30.4aQvpDrIJ-5rTJ6BNeWbDYnovZvpXciBetr8sYBa628`,
+                    "Content-Type" : "application/json"
+                }
+            })
+
+            const result = await  data.json()
+
+            const updatedSpms = result.data.map(form => {
+                return {...form, ['id'] : crypto.randomUUID() }
+            })
+
+            data = await fetch('http://localhost:3005/performance/api/fetchRatings', {
+                method : 'GET',
+                headers : {
+                    "Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMCwicm9sZSI6IklQQ1IiLCJpYXQiOjE3NzQ5MTY4OTcsImV4cCI6MTc3NTAwMzI5N30.4aQvpDrIJ-5rTJ6BNeWbDYnovZvpXciBetr8sYBa628`,
+                    "Content-Type" : "application/json"
+                }
+            })  
+            
+            const ratings = await  data.json()
+            
+            for (const rate of Object.keys(ratings.data[0])) {
+                if (rate !== 'adjective_rating' && typeof ratings.data[0][rate] === 'string' ) {
+                    console.log(parseFloat(ratings.data[0][rate]))
+                    ratings.data[0][rate] = parseFloat(ratings.data[0][rate])
+                }
             }
-        })
-        const result = await  data.json()
-        console.log(result)
-        setUserData(result.data.map(form => {
-            return {...form, ['id'] : crypto.randomUUID() }
-        }))
+
+            dispatch({ type : 'FETCH DATA', payload : {spms : updatedSpms, ratings : ratings.data[0] }})
         }
 
         fetchUserData()
@@ -46,31 +50,7 @@ export function Update () {
 
 
     function addForm () {
-        const randomUUID = crypto.randomUUID()
-        setUserData([...userData, {
-            key_perf : "",
-            actual_accomp : "",
-            succes_indic : "",
-            category : "strat_obj",
-            quality : 0,
-            efficiency : 0,
-            timeliness : 0,
-            avg_per_form : 0,
-            id: randomUUID
-        }])
-
-        setRequest(prev => [...prev, {
-            action : "create",
-            key_perf : "",
-            actual_accomp : "",
-            succes_indic : "",
-            category : "strat_obj",
-            quality : 0,
-            efficiency : 0,
-            timeliness : 0,
-            avg_per_form : 0,
-            id: randomUUID
-        }])
+        dispatch({ type : 'ADD FORM', payload : crypto.randomUUID()})
     }
 
     function computeFormAvg(form) {
@@ -91,11 +71,12 @@ export function Update () {
         }
 
         if (count === 0) return 0;
-         
+        
+        console.log(String(sum / count))
         return String(sum / count);
     }
 
-    function computeAvg (userData) {
+    function computeAvgRating (userData) {
         let avgSum = 0
         let rowNum = 0
         userData.forEach(data => {
@@ -110,7 +91,9 @@ export function Update () {
     function computeFinalRating (e) {
         let avgSum = 0
         let rowNum = 0
-        let dataCopy = [...userData]
+        let dataCopy = state.userData.map(data => (
+            {...data}
+        ))
 
         dataCopy.forEach(data => {
             if (data.category === e.target.name) {
@@ -120,15 +103,15 @@ export function Update () {
             }
         })
         
-        setRatings(prevRating => { return {...prevRating, ['avg_rating'] : computeAvg([...userData]).toFixed(2),  [`${e.target.name}_final`] : Number(avgSum / rowNum) ?(avgSum / rowNum) * Number(e.target.value) : 0, [`${e.target.name}_weight`] : e.target.value}})
-        setRatings(prevRating => { return {...prevRating, ['overall_rating'] : prevRating['core_sup_final'] + prevRating['strat_obj_final'] + prevRating['unplanned_final']}})
-        setRatings(prevRating => { return {...prevRating, ['adjective_rating'] : prevRating.overall_rating >= 5 ? 'OUTSTANDING' : prevRating.overall_rating >= 4 ? 'VERY SATISFACTORY' : prevRating.overall_rating >= 3 ? 'SATISFACTORY' : prevRating.overall_rating >= 2 ? 'UNSATISFACTORY' : 'POOR'}})
+       dispatch({ type : 'COMPUTE RATINGS', payload : {avgSum, rowNum, name : e.target.name, value : e.target.value, computeAvg : computeAvgRating}})
     }
 
-    async function updatePerformance() {
-        //const result =  await updatePerformance(request)
-        console.log(userData)
-        console.log(request)
+    async function update() {
+        //await updatePerformance(state.request)
+        //await updateRatings(state.ratings)
+        console.log(state.request)
+        console.log(state.ratings)
+        
     }
 
     return (    
@@ -137,13 +120,13 @@ export function Update () {
             <Header/>
             <div className='form'>
                 {
-                    Array.isArray(userData) && userData.map(form => {
+                    Array.isArray(state.userData) && state.userData.map(form => {
                         return (
                             <UpdateForm
-                                avg={computeFormAvg(form)}
-                                setUserData={setUserData}
+                                computeFormAvg={computeFormAvg}
+                                computeAvgRating={computeAvgRating}
+                                dispatch={dispatch}
                                 form={form}
-                                setRequest={setRequest}
                                 key={form.id}
                             />
                         )
@@ -153,9 +136,9 @@ export function Update () {
                 <div className='btns'> 
                     <div>
                         <p>Average Rating </p>
-                        <p>{ratings.avg_rating}</p>
+                        <p>{state.ratings.avg_rating}</p>
                     </div>
-                    <button className='submit-btn' onClick={updatePerformance}>Update</button>
+                    <button className='submit-btn' onClick={update}>Update</button>
                 </div>
             
                 <div className='rating-tables'>  
@@ -168,44 +151,44 @@ export function Update () {
                         <tr>
                             <td>Strategic Priority</td>
                             <td>
-                                <select onChange={computeFinalRating} value={String(ratings.strat_obj_weight)} name="strat_obj" className='assigned_weight'>
+                                <select onChange={computeFinalRating} value={String(state.ratings.strat_obj_weight)} name="strat_obj" className='assigned_weight'>
                                     <option value="0.1">10%</option>
                                     <option value="0.2">20%</option>
                                     <option value="0.3">30%</option>
                                 </select>
                             </td>
-                            <td>{ratings.strat_obj_final.toFixed(2)}</td>
+                            <td>{state.ratings.strat_obj_final.toFixed(2)}</td>
                         </tr>
                         <tr>
                             <td>Core/Support Functions</td>
                             <td> 
-                                <select onChange={computeFinalRating} value={String(ratings.core_sup_weight)} name="core_sup" className='assigned_weight'>
+                                <select onChange={computeFinalRating} value={String(state.ratings.core_sup_weight)} name="core_sup" className='assigned_weight'>
                                     <option value="0.7">70%</option>
                                     <option value="0.8">80%</option>
                                     <option value="0.9">90%</option>    
                                 </select>
                             </td>   
-                            <td>{ratings.core_sup_final.toFixed(2)}</td>
+                            <td>{state.ratings.core_sup_final.toFixed(2)}</td>
                         </tr>
                         <tr>
                             <td>Unplanned Results</td>
                             <td>
-                                <select onChange={computeFinalRating} value={String(ratings.unplanned_weight)} name="unplanned" className='assigned_weight'>
+                                <select onChange={computeFinalRating} value={String(state.ratings.unplanned_weight)} name="unplanned" className='assigned_weight'>
                                     <option value="0">0%</option>
                                     <option value="0.1">10%</option>
                                 </select></td>
-                            <td>{ratings.unplanned_final.toFixed(2)}</td>
+                            <td>{state.ratings.unplanned_final.toFixed(2)}</td>
                         </tr>
                     </table>
 
                     <table>
                         <tr>
                             <th>Total Overall Rating</th>
-                            <td>{ratings.overall_rating.toFixed(2)}</td>
+                            <td>{state.ratings.overall_rating.toFixed(2)}</td>
                         </tr>
                         <tr>
                             <th>Adjective Rating</th>
-                            <td>{ratings.adjective_rating}</td>
+                            <td>{state.ratings.adjective_rating}</td>
                         </tr>
                     </table>
                 </div>
