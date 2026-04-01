@@ -42,6 +42,14 @@ export async function fetchUserData (user_id) {
   })
 }
 
+export async function fetchUserRatings (user_id) {
+   return await prisma.ratings.findMany({
+      where : {
+         user_id 
+      }
+  })
+}
+
 export async function dynamicQuery (data, user_id) {
    const userData = await fetchUserData(user_id)
    let dataToUpdate = []

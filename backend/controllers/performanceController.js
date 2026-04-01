@@ -1,4 +1,4 @@
-import { addPerformance, dynamicQuery, fetchUserData } from "../services/performanceServices.js";
+import { addPerformance, dynamicQuery, fetchUserData, fetchUserRatings } from "../services/performanceServices.js";
 import { successResponse, errorResponse } from "../utils/responseFormat.js";
 import { errorHandler } from "../utils/asyncErrorHandler.js";
 
@@ -26,4 +26,10 @@ export async function fetchSpms (req, res) {
    const result = await errorHandler(() => fetchUserData(req.user.user_id))
    
    res.status(200).send(new successResponse(true, result.data, 'Performance Succesfully Retrieved'))
+}
+
+export async function fetchRatings (req, res) {
+    const result = await errorHandler(() => fetchUserRatings(req.user.user_id))
+
+    res.status(200).send(new successResponse(true, result.data, 'Ratings Successfully Retrieved'))
 }

@@ -1,47 +1,18 @@
 import '../components/addForm.css'
 
-export function UpdateForm ({avg, setUserData, form, setRequest}) {
+export function UpdateForm ({computeFormAvg, computeAvgRating, dispatch, form}) {
     function handleChange (e) {
         let { name, value } = e.target
 
         if (name === 'efficiency' || name === 'quality' || name ===  'timeliness') {
             value = Number(value)
         }
-       
-        setUserData(prev => prev.map( f => 
-            f.id === form.id ? {...f, [name] : value}  : f    
-        ))
 
-        setRequest(prev => prev.map( r => 
-            r.id === form.id ? {...r, [name] : value} : r
-        ))
-
-        setRequest(prev => {
-            const existing = prev.find(r => r.id === form.id);
-
-            if (existing) {
-                return prev.map(r =>
-                    r.id === form.id ? { ...r, [name]: value } : r
-                );
-            } else {
-                return [
-                    ...prev,
-                    {
-                        id: form.id,
-                        performance_id: form.performance_id,
-                        action: 'update',
-                        [name]: value
-                    }
-                ];
-            }
-        });
+        dispatch({ type : 'DYNAMIC UPDATE', payload : { id : form.id, name, value, computeAvg : computeFormAvg, computeRating : computeAvgRating, form}})
     }
 
     function deleteForm () {
-        setUserData(prev => prev.filter(f => f.id !== form.id))
-        setRequest(prev => form['performance_id'] ? 
-            [...prev, { ['performance_id'] : form['performance_id'], ['action'] : 'delete'}] :
-            prev.filter(r => r.id !== form.id))
+        dispatch({ type : 'DELETE FORM', payload : {id : form.id, computeRating : computeAvgRating, form}})    
     }
 
     return (    
@@ -79,7 +50,7 @@ export function UpdateForm ({avg, setUserData, form, setRequest}) {
                 </div>
                 <div>
                     <label htmlFor="">A</label>
-                    <input value={avg} type="number" className='timeliness' name='avg_per_form'readOnly/>
+                    <input value={form.avg_per_form} type="number" className='timeliness' name='avg_per_form'readOnly/>
                 </div>
             </div>
         </div>

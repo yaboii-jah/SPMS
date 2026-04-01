@@ -1,25 +1,18 @@
 import '../components/addForm.css'
 
-export function AddForm ({computeFormAvg, setUserData, form}) {
+export function AddForm ({computeFormAvg, computeAvgRating, dispatch, form}) {
     function handleChange (e) {
         let { name, value } = e.target
 
         if (name === 'efficiency' || name === 'quality' || name ===  'timeliness') {
             value = Number(value)
         }
-        console.log(name)
-        console.log(value)
-        
-        setUserData(prev => prev.map( f => 
-            f.id === form.id ? {...f, [name] : value} : f
-        ))
-
-        setUserData(prev => prev.map( f => 
-            f.id === form.id ? {...f, ['avg_per_form'] : computeFormAvg(f)} : f
-        ))
+      
+        dispatch({ type : 'DYNAMIC UPDATE', payload : { id : form.id, name, value, computeAvg : computeFormAvg, computeRating : computeAvgRating}})
     }
+
     function deleteForm () {
-        setUserData(prev => prev.filter(f => f.id !== form.id))
+        dispatch({ type : 'DELETE FORM', payload : {id : form.id, computeRating : computeAvgRating}})
     }
 
     return (    
@@ -56,7 +49,7 @@ export function AddForm ({computeFormAvg, setUserData, form}) {
                 </div>
                 <div>
                     <label htmlFor="">A</label>
-                    <input value={form.avg_per_form} type="number" className='timeliness' name='avg_per_form'  readOnly/>
+                    <input value={form.avg_per_form} type="number" className='timeliness' name='avg_per_form' min={0} max={5} readOnly/>
                 </div>
             </div>
         </div>

@@ -1,48 +1,15 @@
 import '../pages/add.css'
 import { Header } from '../components/header'
 import { AddForm } from '../components/addForm'
-import { useState} from 'react'
-import { addPerformance } from '../api/add'
+import { useReducer } from 'react'
+import { addPerformance, addRatings} from '../api/add'
+import { initialState, reducer } from '../features/addReducer'
 
 export function Add () {
-    const [ratings, setRatings] = useState({
-        avg_rating : 0,
-        strat_obj_weight : 0,
-        core_sup_weight : 0,
-        unplanned_weight : 0,
-        strat_obj_final : 0,
-        core_sup_final : 0,
-        unplanned_final : 0,
-        overall_rating : 0,
-        adjective_rating : ""
-    })
-
-    const [userData, setUserData] = useState([
-        {
-            key_perf : "",
-            actual_accomp : "",
-            succes_indic : "",
-            category : 'strat_obj',
-            quality : 0,
-            efficiency : 0,
-            timeliness : 0,
-            avg_per_form : "",
-            id: crypto.randomUUID()
-        }
-    ])
+    const [state, dispatch] = useReducer(reducer, initialState);
 
     function addForm () {
-        setUserData([...userData, {
-            key_perf : "",
-            actual_accomp : "",
-            succes_indic : "",
-            category : "strat_obj",
-            quality : 0,
-            efficiency : 0,
-            timeliness : 0,
-            avg_per_form : 0,
-            id: crypto.randomUUID()
-        }])
+        dispatch({ type : 'ADD FORM'})
     }
 
     function computeFormAvg(form) {
@@ -82,7 +49,7 @@ export function Add () {
     function computeFinalRating (e) {
         let avgSum = 0
         let rowNum = 0
-        let dataCopy = userData.map(data => (
+        let dataCopy = state.userData.map(data => (
             {...data}
         ))
 
@@ -93,16 +60,13 @@ export function Add () {
                 rowNum++
             }
         })
-        
-        setRatings(prevRating => { return {...prevRating, ['avg_rating'] : computeAvgRating([...userData]).toFixed(2),  [`${e.target.name}_final`] : Number(avgSum / rowNum) ?(avgSum / rowNum) * Number(e.target.value) : 0, [`${e.target.name}_weight`] : e.target.value}})
-        setRatings(prevRating => { return {...prevRating, ['overall_rating'] : prevRating['core_sup_final'] + prevRating['strat_obj_final'] + prevRating['unplanned_final']}})
-        setRatings(prevRating => { return {...prevRating, ['adjective_rating'] : prevRating.overall_rating >= 5 ? 'OUTSTANDING' : prevRating.overall_rating >= 4 ? 'VERY SATISFACTORY' : prevRating.overall_rating >= 3 ? 'SATISFACTORY' : prevRating.overall_rating >= 2 ? 'UNSATISFACTORY' : 'POOR'}})
+
+        dispatch({ type : 'COMPUTE RATINGS', payload : {avgSum, rowNum, name : e.target.name, value : e.target.value, computeAvg : computeAvgRating}})
     }
 
     async function submitPerformance () {
-        //await addPerformance(userData)
-        console.log(userData)
-        console.log(ratings)
+        await addPerformance(state.userData)
+        await addRatings(state.ratings)
     }
     
     return (
@@ -113,11 +77,12 @@ export function Add () {
 
             <div className="form">
                 {
-                    Array.isArray(userData) && userData.map(form => {
+                    Array.isArray(state.userData) && state.userData.map(form => {
                         return (
                             <AddForm
                                 computeFormAvg={computeFormAvg}
-                                setUserData={setUserData}
+                                computeAvgRating={computeAvgRating}
+                                dispatch={dispatch}
                                 form={form}
                                 key={form.id}
                             />
@@ -128,7 +93,7 @@ export function Add () {
                 <div className='btns'> 
                     <div>
                         <p>Average Rating </p>
-                        <p>{computeAvgRating(userData).toFixed(2)}</p>
+                        <p>{computeAvgRating(state.userData).toFixed(2)}</p>
                     </div>
                     <button className='submit-btn' onClick={submitPerformance}>Submit</button>
                 </div>
@@ -145,12 +110,12 @@ export function Add () {
                             <td>
                                 <select onChange={computeFinalRating} name="strat_obj" className='assigned_weight'>
                                     
-                                    <option value=".10">10%</option>
-                                    <option value=".20">20%</option>
                                     <option value=".30">30%</option>
+                                    <option value=".20">20%</option>
+                                    <option value=".10">10%</option>
                                 </select>
                             </td>
-                            <td>{ratings.strat_obj_final.toFixed(2)}</td>
+                            <td>{state.ratings.strat_obj_final.toFixed(2)}</td>
                         </tr>
                         <tr>
                             <td>Core/Support Functions</td>
@@ -161,7 +126,7 @@ export function Add () {
                                     <option value=".90">90%</option>    
                                 </select>
                             </td>   
-                            <td>{ratings.core_sup_final.toFixed(2)}</td>
+                            <td>{state.ratings.core_sup_final.toFixed(2)}</td>
                         </tr>
                         <tr>
                             <td>Unplanned Results</td>
@@ -170,18 +135,18 @@ export function Add () {
                                     <option value="0">0%</option>
                                     <option value=".10">10%</option>
                                 </select></td>
-                            <td>{ratings.unplanned_final.toFixed(2)}</td>
+                            <td>{state.ratings.unplanned_final.toFixed(2)}</td>
                         </tr>
                     </table>
 
                     <table>
                         <tr>
                             <th>Total Overall Rating</th>
-                            <td>{ratings.overall_rating.toFixed(2)}</td>
+                            <td>{state.ratings.overall_rating.toFixed(2)}</td>
                         </tr>
                         <tr>
                             <th>Adjective Rating</th>
-                            <td>{ratings.adjective_rating}</td>
+                            <td>{state.ratings.adjective_rating}</td>
                         </tr>
                     </table>
                 </div>
