@@ -5,7 +5,7 @@ import { UpdateForm } from '../components/updateForm';
 import { useNavigate } from 'react-router-dom'
 import { updatePerformance } from '../api/update';
 import { initialState, reducer } from '../features/updateReducer'
-import { useAuth } from '../contexts/authContext'
+import { useAuth } from '../contexts/auth/useAuth'
 import { refresh } from '../api/refresh'
 import { errorResponse } from "../utils/responseFormat";
 
@@ -138,6 +138,7 @@ export function Update () {
     }
 
     async function update() {
+        
         const choice = confirm(" Are you sure you want to update performance? ")
 
         if (choice) {

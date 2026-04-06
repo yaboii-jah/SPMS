@@ -2,7 +2,7 @@ import './view.css'
 import { useEffect, useState} from 'react'
 import logo from '../assets/PCGG-Logo.png'
 import { UserPerformance } from '../components/userPerformance'
-import { useAuth } from '../contexts/authContext'
+import { useAuth } from '../contexts/auth/useAuth'
 import { refresh } from '../api/refresh'
 import { errorResponse } from "../utils/responseFormat";
 
@@ -40,6 +40,19 @@ export function View() {
 
             const perf_result = await performance.json()
 
+            if (perf_result.error === 403) {
+                console.log('test')
+                const result = await refresh(setAccessToken)
+    
+                if (!result.success) {
+                    return new errorResponse(false, result.message)
+                }
+    
+                const newToken = result.data;
+    
+                return await fetchUserData(newToken);
+            }
+
             perf_result.data.forEach(perf => {
                
                 if (perf.category === 'strat_obj') stratCopy.push(perf)
@@ -60,6 +73,7 @@ export function View() {
             const rate_result = await ratings.json()
 
             if (rate_result.error === 403) {
+                console.log('test')
                 const result = await refresh(setAccessToken)
     
                 if (!result.success) {

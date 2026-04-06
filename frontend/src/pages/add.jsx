@@ -5,7 +5,7 @@ import { useReducer } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { addPerformance} from '../api/add'
 import { initialState, reducer } from '../features/addReducer'
-import { useAuth } from '../contexts/authContext'
+import { useAuth } from '../contexts/auth/useAuth'
 
 export function Add () {
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -69,6 +69,8 @@ export function Add () {
     }
 
     async function submitPerformance () {
+        console.log(state.ratings)
+        console.log(state.userData)
         const choice = confirm(" Are you sure you want to add performance? ")
 
         if (choice) {

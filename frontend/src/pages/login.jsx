@@ -1,7 +1,7 @@
 import { useRef} from 'react';
 import { LogUser } from '../api/login'
 import { useNavigate} from 'react-router-dom'
-import { useAuth } from "../contexts/authContext";
+import { useAuth } from "../contexts/auth/useAuth";
 import '../pages/login.css'
 import logo from '../assets/PCGG-Logo.png'
 
