@@ -12,6 +12,8 @@ export function Add () {
     const { accessToken, setAccessToken } = useAuth()
     const navigate = useNavigate()
 
+    console.log(state.ratings)
+
     function addForm () {
         dispatch({ type : 'ADD FORM'})
     }
@@ -36,7 +38,7 @@ export function Add () {
 
         if (count === 0) return 0;
          
-        return String((sum / count).toFixed(2));
+        return String((sum / count).toFixed(3));
     }
 
     function computeAvgRating (userData) {
@@ -112,7 +114,7 @@ export function Add () {
                 <div className='btns'> 
                     <div>
                         <p>Average Rating </p>
-                        <p>{computeAvgRating(state.userData).toFixed(2)}</p>
+                        <p>{state.ratings['avg_rating']}</p>
                     </div>
                     <button className='submit-btn' onClick={submitPerformance}>Submit</button>
                 </div>
