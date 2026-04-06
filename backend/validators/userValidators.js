@@ -63,6 +63,8 @@ export const intialValidators = {
 function additionalValidator (role) {
   const addedValidators = {}
 
+  console.log(role)
+
   if ( role === 'IPCR' || role === 'DPCR') {
     addedValidators['office_director'] = 
       body('office_director')
@@ -134,12 +136,12 @@ export async function logInValidator (req, res, next) {
 }
 
 export async function updateValidator (req, res, next) {
-  const required = {...intialValidators, ...additionalValidator(req.body.role)} 
+  const required = {...intialValidators, ...additionalValidator(req.user.role)} 
   const fields = Object.keys(req.body);
   
   const validators = []
 
-  if (!fields.every(req => required.includes(req))) {
+  if (!fields.every(req => Object.keys(required).includes(req))) {
     return res.status(422).send(new errorResponse(false, 'Invalid fields to Check', 'NO_VALID_FIELDS'))
   }
 

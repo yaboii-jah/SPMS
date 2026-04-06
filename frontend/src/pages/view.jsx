@@ -1,321 +1,344 @@
 import './view.css'
+import { useEffect, useState} from 'react'
+import logo from '../assets/PCGG-Logo.png'
+import { UserPerformance } from '../components/userPerformance'
+import { useAuth } from '../contexts/authContext'
+import { refresh } from '../api/refresh'
+import { errorResponse } from "../utils/responseFormat";
 
-export function View () {
-    return (
-        <>
-            <title>View</title>
+// --- needed todo ---
+//  - date form was added
+//  - period 
+//  - conditional process that check the user role after initial rendering that
+//    will dynamically render fields
+//  - resize the form, because i think it looks too long
+//  - make it responsive
 
-            <div className="agency">
-                <img className="agency-logo" src="./PCGG-Logo.png" alt=""/>
-                <strong className="agency-name">Presidential Commision on Good Government</strong>
-            </div>
+export function View() {
+    let [strat_obj, setStrat] = useState([])
+    let [core_sup, setCore] = useState([])
+    let [unplanned, setUnplanned] = useState([])
+    let [userRatings, setRatings] = useState({})
+    let [user, setUser] = useState({})
+    const { accessToken, setAccessToken } = useAuth()
+    
+    useEffect(() => {
+        async function fetchUserData (token = accessToken)  {
+            let stratCopy = []
+            let coreCopy = []
+            let unplannedCopy = []
+            let ratingsCopy = {}
 
-            <div className="form"> 
-                <div className="ipcr-container">
-                    <h4>INDIVIDUAL PERFORMANCE COMMITMENT AND REVIEW FORM (IPCR)</h4>
-                    <p className="commitment-text">
-                        I, <strong style="text-decoration: underline;">Rodrigo B. Dumaquita Jr</strong>, of the 
-                        <strong style="text-decoration: underline;">Management Information Services Division, Research and Development Department</strong> commit to deliver and agree to be 
-                        rated on the attainment of the following targets in accordance with the indicated measures for the period 
-                        <strong style="text-decoration: underline;">July to December 31, 2025.</strong>
-                    </p>
-                </div>
+            const performance = await fetch('http://localhost:3005/performance/api/fetchSpms', {
+                method : 'GET',
+                headers : {
+                    "Authorization" : `Bearer ${token}`,
+                    "Content-Type" : "application/json"
+                },
+                credentials : "include"
+            })
 
-                <div className="signature-section">
-                    <div className="signature-block">
-                    <div className="signature-line"></div>
-                    <div className="label">Employee</div>
-                    <div className="date-row">
-                        Date: <strong style="text-decoration: underline;">Feb 05, 2025.</strong>
-                    </div>
-                    </div>
-                </div>
+            const perf_result = await performance.json()
 
-                <table>
-                    <tr>
-                        <th style="background-color: rgb(224, 224, 224); text-align: left;">Recommending Approval:</th>
-                        <th style="background-color: rgb(224, 224, 224);">Date</th>
-                        <th style="background-color: rgb(224, 224, 224); text-align: left;">Approved by:</th>
-                        <th style="background-color: rgb(224, 224, 224);">Date</th>
-                    </tr>
-                    <tr>
-                        <td style="text-align: center;">FRANCIS VICTOR M. ALIGAEN</td>
-                        <td rowspan="2" style="text-align: center;">Feb 26, 2026</td>
-                        <td style="text-align: center;">ATTY. ALEXANDRO F. VIVAS II</td>
-                        <td rowspan="2" style="text-align: center;">Feb 26, 2026</td>
-                    </tr>
-                    <tr>
-                        <td style="background-color: rgb(224, 224, 224); text-align: center; font-weight: bold;">Immediate Supervisor/Division Chief</td>
-                        <td style="background-color: rgb(224, 224, 224); text-align: center; font-weight: bold;">Head of Office/Director</td>
-                    </tr>
-                    <tr>
-                        <td colspan="4" style="background-color: rgb(244, 244, 244)">PART 1: Evaluation</td>
-                    </tr>
-                </table>
+            perf_result.data.forEach(perf => {
+               
+                if (perf.category === 'strat_obj') stratCopy.push(perf)
+                if (perf.category === 'core_sup') coreCopy.push(perf)
+                if (perf.category === 'unplanned') unplannedCopy.push(perf)
+            })
 
-                <table>
-                    <tr>
-                        <th colspan="2" style="background-color: rgb(201, 201, 201)">To be accomplished During Planning Phase</th>
-                        <th colspan="6" style="background-color: rgb(201, 201, 201)">To be accomplished During Planning Phase</th>
-                    </tr>
-                    <tr>
-                        <td rowspan="2" style={"background-color: rgb(224, 224, 224); text-align: center; font-weight: bold;"}>Key Performance Area(KPA)/Office <br/> Performance Scorecard</td>
-                        <td rowspan="2" style="background-color: rgb(224, 224, 224); text-align: center; font-weight: bold;">Success Indicators <br/> (TARGETS+MEASURES)</td>
-                        <td rowspan="2" style="background-color: rgb(224, 224, 224); text-align: center; font-weight: bold;">Actual Accomplishments</td>
-                        <td colspan="4" style="background-color: rgb(224, 224, 224); text-align: center; font-weight: bold;">Ratings</td>
-                        <td rowspan="2" style="background-color: rgb(224, 224, 224); text-align: center; font-weight: bold;">Remarks</td>
-                    </tr>
-                    <tr style="text-align: center; ">
-                        <td style="padding: 10px; padding-left: 15px; padding-right: 15px; border-width: 2px;">Q</td>
-                        <td style="padding: 10px; padding-left: 15px; padding-right: 15px; border-width: 2px;">E</td>
-                        <td style="padding: 10px; padding-left: 15px; padding-right: 15px; border-width: 2px;">T</td>
-                        <td style="padding: 10px; padding-left: 15px; padding-right: 15px; border-width: 2px;">A</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: bold;">STRATEGIC OBJECTIVES</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td style="background-color: rgb(248, 248, 248)"></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Customer Satisfaction Rating</td>
-                        <td>At least 80% Satisfied in Customer Satisfaction Rating</td>
-                        <td>No NCs to be addressed from 2024 external audit.  OFIs from IQA and this year’s external audit incorporated as process improvements for 2025.</td>
-                        <td style="padding-top: 25px; padding-bottom: 25px;">4</td>
-                        <td>4</td>
-                        <td></td>
-                        <td style="background-color: rgb(248, 248, 248)">4.00</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>QMS Conformance</td>
-                        <td>100% of NC addressed</td>
-                        <td>No NCs to be addressed from 2024 external audit.  OFIs from IQA and this year’s external audit incorporated as process improvements for 2025.</td>
-                        <td style="padding-top: 25px; padding-bottom: 25px;">4</td>
-                        <td>4</td>
-                        <td></td>
-                        <td style="background-color: rgb(248, 248, 248)">4.</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Process improvement plan implemented</td>
-                        <td>At least 1 of the following: • Property inventory • New Document Tracking System"</td>
-                        <td>1.  Property Inventory - still pending user testing.  Assigned MISD staff to follow up.                                                                                                                 2.  Document Tracking - first 4 processes rolled out and implemented.</td>
-                        <td style="padding-top: 25px; padding-bottom: 25px;">5</td>
-                        <td>4</td>
-                        <td></td>
-                        <td style="background-color: rgb(248, 248, 248)">4.50</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>IT Trainings conducted</td>
-                        <td>Two ICT users training</td>
-                        <td>MISD conducted in-house training on ILovePDF and Digital Citizenship for select employees in Q4.</td>
-                        <td style="padding-top: 25px; padding-bottom: 25px;">5</td>
-                        <td>4</td>
-                        <td></td>
-                        <td style="background-color: rgb(248, 248, 248)">4.50</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: bold; background-color: rgb(224, 224, 224);">CORE/SUPPORT FUNCTIONS</td>
-                        <td style="background-color: rgb(224, 224, 224);"></td>
-                        <td style="background-color: rgb(224, 224, 224);"></td>
-                        <td style="background-color: rgb(224, 224, 224);"></td>
-                        <td style="background-color: rgb(224, 224, 224);"></td>
-                        <td style="background-color: rgb(224, 224, 224);"></td>
-                        <td style="background-color: rgb(224, 224, 224);"></td>
-                        <td style="background-color: rgb(224, 224, 224);"></td>
-                    </tr>
-                    <tr>
-                        <td>Compliance to mandated standards/ policies</td>
-                        <td>100% Compliance on  HR standards/policies e.g. SALN, PDS, IPCR, ITR, etc</td>
-                        <td>100% submitted IPCR (1st sem 2024) </td>
-                        <td style="padding-top: 25px; padding-bottom: 25px;">5</td>
-                        <td></td>
-                        <td>4</td>
-                        <td style="background-color: rgb(248, 248, 248)">4.50</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Strengthen and improve pool of internal talents</td>
-                        <td>90% attendance and preparation of the  meetings of the different Committees </td>
-                        <td>100% attendance and preparation of the  meetings of the different Committees </td>
-                        <td style="padding-top: 25px; padding-bottom: 25px;">5</td>
-                        <td></td>
-                        <td>4</td>
-                        <td style="background-color: rgb(248, 248, 248)">4.50</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Institutional Commitment Membership</td>
-                        <td>At least 1 per staff of Institutional Commitment Membership</td>
-                        <td>1  Institutional Commitment Membership</td>
-                        <td style="padding-top: 25px; padding-bottom: 25px;">5</td>
-                        <td></td>
-                        <td>4</td>
-                        <td style="background-color: rgb(248, 248, 248)">4.50</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td> IT Equipment distributed</td>
-                        <td>At least 95% of all IT equipment configured and/or distributed within Citizen Charter targets</td>
-                        <td>2 Laptops  configured</td>
-                        <td style="padding-top: 25px; padding-bottom: 25px;"></td>
-                        <td>5</td>
-                        <td>4</td>
-                        <td style="background-color: rgb(248, 248, 248)">4.50</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td> % of ISSP implementation</td>
-                        <td>At least 34% of current ISSP implemented for Year 1</td>
-                        <td>100% implementation for the year including changes resulting from 2024 budget constraints.  Overall, 34% implemented at Year 1.	</td>
-                        <td style="padding-top: 25px; padding-bottom: 25px;">4</td>
-                        <td></td>
-                        <td>4</td>
-                        <td style="background-color: rgb(248, 248, 248)">4.00</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Percentage of staff with at least one competency/ enhancement intervention in a year</td>
-                        <td>100% MISD staff assigned online DICT IT training track</td>
-                        <td>Web Content Management Using WordPress(40hrs) CyberSecurity Training (7hrs)</td>
-                        <td style="padding-top: 25px; padding-bottom: 25px;">5</td>
-                        <td>4</td>
-                        <td></td>
-                        <td style="background-color: rgb(248, 248, 248)">4.50</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td> IT requests resolved on time</td>
-                        <td>Re-designed website subpages</td>
-                        <td>Changes to website subpages have not been approved by IEC Committee for implementation.  No additional enhancements done for this period. (Not rated)</td>
-                        <td style="padding-top: 25px; padding-bottom: 25px;">4</td>
-                        <td></td>
-                        <td>4</td>
-                        <td style="background-color: rgb(248, 248, 248)">4.00</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>No. of systems enhanced/developed</td>
-                        <td>At least 95% of all IT requests resolved within Citizen Charter targets</td>
-                        <td>49 requests received for the period with 98.38% of requests resolved within ARTA resolution times</td>
-                        <td style="padding-top: 25px; padding-bottom: 25px;">5</td>
-                        <td></td>
-                        <td>4</td>
-                        <td style="background-color: rgb(248, 248, 248)">4.50</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td style="background-color: rgb(224, 224, 224);font-weight: bold;">UPLANNED</td>
-                        <td style="background-color: rgb(224, 224, 224);"></td>
-                        <td style="background-color: rgb(224, 224, 224);"></td>
-                        <td style="background-color: rgb(224, 224, 224);"></td>
-                        <td style="background-color: rgb(224, 224, 224);"></td>
-                        <td style="background-color: rgb(224, 224, 224);"></td>
-                        <td style="background-color: rgb(224, 224, 224);"></td>
-                        <td style="background-color: rgb(224, 224, 224);"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                        <td colspan="4" style="background-color: rgb(221, 221, 221); text-align: center;">Average Rating</td>
-                        <td style="background-color: rgb(248, 248, 248); font-weight: bold;">4.42</td>
-                        <td></td>
-                    </tr>
-                </table>
+            const ratings = await fetch('http://localhost:3005/performance/api/fetchRatings', {
+                method : 'GET',
+                headers : {
+                    "Authorization" : `Bearer ${token}`,
+                    "Content-Type" : "application/json"
+                },
+                credentials : "include"
 
-                <table style="margin-top: 10px;">
-                    <tr>
-                        <td style="text-align: center;">RATINGS:</td>
-                        <td style="text-align: center;">5-Outstanding</td>
-                        <td style="text-align: center;">4-Very Satisfactory</td>
-                        <td style="text-align: center;">3-Satisfactory</td>
-                        <td style="text-align: center;">2-Unsatisfactory</td>
-                        <td style="text-align: center;">1-Poor</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: center;">Legend:</td>
-                        <td colspan="2" style="text-align: center;">Q - Quality/Effectiveness ( e.g. Meeting Standards, <br/> Acceptablity, Accuracy, Completeness of reports, <br/> Creativity, Initiative )</td>
-                        <td colspan="2" style="text-align: center;">E - Efficiency ( e.g. Standard response time no. of <br/> requests acted upon over total request)</td>
-                        <td style="text-align: center;">T - Timeliness ( Done w/in scheduled / <br/> expected timeframe )</td>
-                    </tr>
-                    <tr>
-                        <td colspan="6">PART II: Development Assessment</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Need for training or other developmental <br/> intervention, Why?:</td>
-                        <td colspan="4"></td>
-                    </tr>
-                </table>
-                
-                <div style="display: flex; flex-direction: column; align-items: end;">
-                    <table style=" margin-top: 10px; width: 600px; gap: 20px;">
-                        <tr>
-                            <th style="background-color: rgb(222, 222, 222) text-align: center;">Category</th>
-                            <th style="background-color: rgb(222, 222, 222) text-align: center;">ASSIGNED WEIGHT</th>
-                            <th style="background-color: rgb(222, 222, 222) text-align: center;">FINAL RATING</th>
-                        </tr>
-                        <tr>
-                            <td style="background-color: rgb(245, 245, 245)">Strategic Priority</td>
-                            <td style="text-align: center;">30%</td>
-                            <td style="background-color: rgb(245, 245, 245); text-align: center;">1.35</td>
-                        </tr>
-                        <tr>
-                            <td style="background-color: rgb(245, 245, 245)">Core/Suppoert Functions</td>
-                            <td style="text-align: center;">70%</td>
-                            <td style="background-color: rgb(245, 245, 245); text-align: center;">3.06</td>
-                        </tr>
-                        <tr>
-                            <td style="background-color: rgb(245, 245, 245)">Unplanned Results</td>
-                            <td style="text-align: center;"></td>
-                            <td style="background-color: rgb(245, 245, 245); text-align: center;">0.00</td>
-                        </tr>
-                    </table>
+            }) 
+            
+            const rate_result = await ratings.json()
 
-                    <table style="width: 400px; margin-top: 10px; border-width: 2px;">
-                        <tr>
-                            <th style="background-color: rgb(245, 245, 245)">Total Overall Rating</th>
-                            <td style="background-color: rgb(245, 245, 245); text-align: center;">4.41</td>
-                        </tr>
-                        <tr>
-                            <th style="background-color: rgb(245, 245, 245)">Adjective Rating</th>
-                            <td style="background-color: rgb(245, 245, 245); text-align: center;">VERY SATISFACTORY</td>
-                        </tr>
-                    </table>
-                </div>
+            if (rate_result.error === 403) {
+                const result = await refresh(setAccessToken)
+    
+                if (!result.success) {
+                    return new errorResponse(false, result.message)
+                }
+    
+                const newToken = result.data;
+    
+                return await fetchUserData(newToken);
+            }
 
-                <table style="margin-top: 10px; border-width: 2px;">
-                    <tr>
-                        <th style="background-color: rgb(245, 245, 245)">Discussed with:</th>
-                        <th style="background-color: rgb(245, 245, 245)">Date</th>
-                        <th style="background-color: rgb(245, 245, 245)">Assessed by:</th>
-                        <th style="background-color: rgb(245, 245, 245)">Date</th>
-                        <th style="background-color: rgb(245, 245, 245)">Final Rating by:</th>
-                        <th style="background-color: rgb(245, 245, 245)">Date</th>
-                    </tr>
-                    <tr>
-                        <td style="text-align: center;">RODRIGO B. DUMAQUITA JR.</td>
-                        <td rowspan="2" style="text-align: center;">Feb 05, 2025</td>
-                        <td style="text-align: center;">
-                            <p> I certify that i discussed my assessment of the performance with the <br/>employee</p>
-                            <p style="font-weight: bold; margin-top: 10px;">FRANCIS VICTOR M. ALIGAEN</p>
-                        </td>
-                        <td rowspan="2" style="text-align: center;">Feb 05, 2025</td>
-                        <td style="text-align: center; vertical-align: bottom; font-weight: bold;">ATTY. ALEJANDRO F. VIVAS II</td>
-                        <td rowspan="2" style="text-align: center;">Feb 05, 2025</td>
-                    </tr>
-                    <tr>
-                        <td style="background-color: rgb(245, 245, 245); text-align: center;">Employee</td>
-                        <td style="background-color: rgb(245, 245, 245); text-align: center;">Immediate Supervisor / Division Chief </td>
-                        <td style="background-color: rgb(245, 245, 245); text-align: center;">Head of Office / Director</td>
-                    </tr>
-                </table>
-            </div>
-        </>
-    )
+            ratingsCopy = rate_result.data[0]
+
+            const user = await fetch('http://localhost:3005/auth/api/fetchUser', {
+                method : 'GET',
+                headers : {
+                    "Authorization" : `Bearer ${token}`,
+                    "Content-Type" : "application/json"
+                },
+                credentials : "include"
+
+            })
+    
+            const user_result = await user.json()
+
+            console.log(user_result)
+
+            if (user_result.error === 403) {
+                const result = await refresh(setAccessToken)
+    
+                if (!result.success) {
+                    return new errorResponse(false, result.message)
+                }
+    
+                const newToken = result.data;
+    
+                return await fetchUserData(newToken);
+            }
+
+            setStrat(stratCopy)
+            setCore(coreCopy)
+            setUnplanned(unplannedCopy)
+            setRatings(ratingsCopy)
+            setUser(user_result.data)
+        }
+
+        fetchUserData()
+    }, [])
+
+
+  return (
+    <>
+    <div className='form-container'> 
+      <div className="view-agency">
+          <img className="view-agency-logo" src={logo}/>
+          <strong className="view-agency-name">Presidential Commision on Good Government</strong>
+      </div>
+
+      <div className="ipcr-form"> 
+          <div className="view-ipcr-container">
+              <h4>INDIVIDUAL PERFORMANCE COMMITMENT AND REVIEW FORM (IPCR)</h4>
+              <p className="commitment-text">
+                  I, <strong style={{textDecoration : "underline"}}>{`${user.first_name} ${user.middle_name ? `${user.middle_name[0]}. ` : " "}${user.last_name}`}</strong>, of the  
+                   <strong style={{textDecoration : "underline"}}>{` ${user.department}`}</strong> commit to deliver and agree to be 
+                  rated on the attainment of the following targets in accordance with the indicated measures for the period 
+                  <strong style={{textDecoration : "underline"}}> July to December 31, 2025.</strong>
+              </p>
+          </div>
+
+          <div className="view-signature-section">
+              <div className="view-signature-block">
+              <div className="view-signature-line"></div>
+              <div className="view-label">Employee</div>
+              <div className="view-date-row">
+                  Date: <strong style={{textDecoration : "underline"}}>Feb 05, 2025.</strong>
+              </div>
+              </div>
+          </div>
+
+          <table className="view-table">
+              <tr>
+                  <th style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "left"}}>Recommending Approval:</th>
+                  <th style={{backgroundColor: "rgb(224, 224, 224)"}}>Date</th>
+                  <th style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "left"}}>Approved by:</th>
+                  <th style={{backgroundColor: "rgb(224, 224, 224)"}}>Date</th>
+              </tr>
+              <tr>
+                  <td style={{textAlign: "center"}}>{user.supervisor_division_chief ? user.supervisor_division_chief.toUpperCase() : ""}</td>
+                  <td rowSpan={2} style={{textAlign: "center"}}>Feb 26, 2026</td>
+                  <td style={{textAlign: "center"}}>{user.office_director ? user.office_director.toUpperCase() : ""}</td>
+                  <td rowSpan={2} style={{textAlign: "center"}}>Feb 26, 2026</td>
+              </tr>
+              <tr>
+                  <td style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Immediate Supervisor/Division Chief</td>
+                  <td style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Head of Office/Director</td>
+              </tr>
+              <tr>
+                  <td colSpan={4} style={{backgroundColor: "rgb(224, 224, 224)"}}>PART 1: Evaluation</td>
+              </tr>
+          </table>
+
+          <table className="view-table">
+              <tr>
+                  <th colSpan={2} style={{backgroundColor: "rgb(201, 201, 201)"}}>To be accomplished During Planning Phase</th>
+                  <th colSpan={6} style={{backgroundColor: "rgb(201, 201, 201)"}}>To be accomplished During Planning Phase</th>
+              </tr>
+              <tr>
+                  <td rowSpan={2} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Key Performance Area(KPA)/Office <br/> Performance Scorecard</td>
+                  <td rowSpan={2} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Success Indicators <br/> (TARGETS+MEASURES)</td>
+                  <td rowSpan={2} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Actual Accomplishments</td>
+                  <td colSpan={4} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Ratings</td>
+                  <td colSpan={2} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Remarks</td>
+              </tr>
+              <tr style={{textAlign: "center"}}>
+                  <td style={{padding: 10, paddingLeft: 15, paddingRight: 15, borderWidth: 2}}>Q</td>
+                  <td style={{padding: 10, paddingLeft: 15, paddingRight: 15, borderWidth: 2}}>E</td>
+                  <td style={{padding: 10, paddingLeft: 15, paddingRight: 15, borderWidth: 2}}>T</td>
+                  <td style={{padding: 10, paddingLeft: 15, paddingRight: 15, borderWidth: 2}}>A</td>
+              </tr>
+
+              <tr>
+                  <td style={{fontWeight: "bold"}}>STRATEGIC OBJECTIVES</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td style={{backgroundColor: "rgb(248, 248, 248)"}}></td>
+                  <td></td>
+              </tr>
+
+                {strat_obj.map(perf => {
+                    return (
+                        <UserPerformance 
+                            strategy={perf}
+                            key={perf.performance_id}
+                        />
+                    )
+                })}
+
+                <tr>
+                  <td style={{fontWeight: "bold", backgroundColor: "rgb(224, 224, 224)"}}>CORE / SUPPORT FUNCTIONS</td>
+                  <td style={{backgroundColor: "rgb(224, 224, 224)"}}></td>
+                  <td style={{backgroundColor: "rgb(224, 224, 224)"}}></td>
+                  <td style={{backgroundColor: "rgb(224, 224, 224)"}}></td>
+                  <td style={{backgroundColor: "rgb(224, 224, 224)"}}></td>
+                  <td style={{backgroundColor: "rgb(224, 224, 224)"}}></td>
+                  <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
+                  <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
+              </tr>
+   
+                {core_sup.map(perf => {
+                    return (
+                        <UserPerformance 
+                            strategy={perf}
+                            key={perf.performance_id}
+                        />
+                    )
+                })}
+              
+              <tr>
+                  <td style={{fontWeight: "bold", backgroundColor: "rgb(224, 224, 224)"}}>UPLANNED</td>
+                  <td style={{backgroundColor: "rgb(224, 224, 224)"}}></td>
+                  <td style={{backgroundColor: "rgb(224, 224, 224)"}}></td>
+                  <td style={{backgroundColor: "rgb(224, 224, 224)"}}></td>
+                  <td style={{backgroundColor: "rgb(224, 224, 224)"}}></td>
+                  <td style={{backgroundColor: "rgb(224, 224, 224)"}}></td>
+                  <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
+                  <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
+              </tr>
+               
+               {unplanned.map(perf => {
+                    return (
+                        <UserPerformance 
+                            strategy={perf}
+                            key={perf.performance_id}
+                        />
+                    )
+                })}
+
+              <tr>
+                  <td colSpan={2}></td>
+                  <td colSpan={4} style={{backgroundColor: "rgb(221, 221, 221)", textAlign: "center"}}>Average Rating</td>
+                  <td style={{backgroundColor: "rgb(248, 248, 248)", fontWeight: "bold"}}>{userRatings.avg_rating}</td>
+                  <td></td>
+              </tr>
+          </table>
+
+          <table className="view-table" style={{marginTop: 10}}>
+              <tr>
+                  <td style={{textAlign: "center"}}>RATINGS:</td>
+                  <td style={{textAlign: "center"}}>5-Outstanding</td>
+                  <td style={{textAlign: "center"}}>4-Very Satisfactory</td>
+                  <td style={{textAlign: "center"}}>3-Satisfactory</td>
+                  <td style={{textAlign: "center"}}>2-Unsatisfactory</td>
+                  <td style={{textAlign: "center"}}>1-Poor</td>
+              </tr>
+              <tr>
+                  <td style={{textAlign: "center"}}>Legend:</td>
+                  <td colSpan={2} style={{textAlign: "center"}}>Q - Quality/Effectiveness ( e.g. Meeting Standards, <br/> Acceptablity, Accuracy, Completeness of reports, <br/> Creativity, Initiative )</td>
+                  <td colSpan={2} style={{textAlign: "center"}}>E - Efficiency ( e.g. Standard response time no. of <br/> requests acted upon over total request)</td>
+                  <td style={{textAlign: "center"}}>T - Timeliness ( Done w/in scheduled / <br/> expected timeframe )</td>
+              </tr>
+              <tr>
+                  <td colSpan={6}>PART II: Development Assessment</td>
+              </tr>
+              <tr>
+                  <td colSpan={2}>Need for training or other developmental <br/> intervention, Why?:</td>
+                  <td colSpan={4}></td>
+              </tr>
+          </table>
+          
+          <div style={{display: "flex", flexDirection: "column", alignItems: "end"}}>
+              <table style={{marginTop: 10, width: 600, gap: 20}} className="view-table" >
+                  <tr>
+                      <th style={{backgroundColor: "rgb(222, 222, 222)", textAlign: "center"}}>Category</th>
+                      <th style={{backgroundColor: "rgb(222, 222, 222)", textAlign: "center"}}>ASSIGNED WEIGHT</th>
+                      <th style={{backgroundColor: "rgb(222, 222, 222)", textAlign: "center"}}>FINAL RATING</th>
+                  </tr>
+                  <tr>
+                      <td style={{backgroundColor: "rgb(245, 245, 245)"}}>Strategic Priority</td>
+                      <td style={{textAlign: "center"}}>{userRatings.strat_obj_weight}0%</td>
+                      <td style={{backgroundColor: "rgb(245, 245, 245)", textAlign: "center"}}>{userRatings.strat_obj_final}</td>
+                  </tr>
+                  <tr>
+                      <td style={{backgroundColor: "rgb(245, 245, 245)"}}>Core/Support Functions</td>
+                      <td style={{textAlign: "center"}}>{userRatings.core_sup_weight}0%</td>
+                      <td style={{backgroundColor: "rgb(245, 245, 245)", textAlign: "center"}}>{userRatings.core_sup_final}</td>
+                  </tr>
+                  <tr>
+                      <td style={{backgroundColor: "rgb(245, 245, 245)"}}>Unplanned Results</td>
+                      <td style={{textAlign: "center"}}>{userRatings.unplanned_weight}0%</td>
+                      <td style={{backgroundColor: "rgb(245, 245, 245)", textAlign: "center"}}>{userRatings.unplanned_final}</td>
+                  </tr>
+              </table>
+
+              <table className="view-table" style={{width: 400, marginTop: 10, borderWidth: 2}}>
+                  <tr>
+                      <th style={{backgroundColor: "rgb(245, 245, 245)"}}>Total Overall Rating</th>
+                      <td style={{backgroundColor: "rgb(245, 245, 245)", textAlign: "center"}}>{userRatings.overall_rating}</td>
+                  </tr>
+                  <tr>
+                      <th style={{backgroundColor: "rgb(245, 245, 245)"}}>Adjective Rating</th>
+                      <td style={{backgroundColor: "rgb(245, 245, 245)", textAlign: "center"}}>{userRatings.adjective_rating}</td>
+                  </tr>
+              </table>
+          </div>
+
+          <table className="view-table" style={{marginTop: 10, borderWidth: 2}}>
+              <tr>
+                  <th style={{backgroundColor: "rgb(245, 245, 245)"}}>Discussed with:</th>
+                  <th style={{backgroundColor: "rgb(245, 245, 245)"}}>Date</th>
+                  <th style={{backgroundColor: "rgb(245, 245, 245)"}}>Assessed by:</th>
+                  <th style={{backgroundColor: "rgb(245, 245, 245)"}}>Date</th>
+                  <th style={{backgroundColor: "rgb(245, 245, 245)"}}>Final Rating by:</th>
+                  <th style={{backgroundColor: "rgb(245, 245, 245)"}}>Date</th>
+              </tr>
+              <tr>
+                  <td style={{textAlign: "center"}}>{`${user.first_name} ${user.middle_name ? `${user.middle_name[0]}. ` : " "}${user.last_name}`}</td>
+                  <td rowSpan={2} style={{textAlign: "center"}}>Feb 05, 2025</td>
+                  <td style={{textAlign: "center"}}>
+                      <p> I certify that i discussed my assessment of the performance with the <br/>employee</p>
+                      <p style={{fontWeight: "bold", marginTop: 10}}>{user.supervisor_division_chief ? user.supervisor_division_chief.toUpperCase() : ""}</p>
+                  </td>
+                  <td rowSpan={2} style={{textAlign: "center"}}>Feb 05, 2025</td>
+                  <td style={{textAlign: "center", verticalAlign: "bottom", fontWeight: "bold"}}>{user.office_director ? user.office_director.toUpperCase() : ""}</td>
+                  <td rowSpan={2} style={{textAlign: "center"}}>Feb 05, 2025</td>
+              </tr>
+              <tr>
+                  <td style={{backgroundColor: "rgb(245, 245, 245)", textAlign: "center"}}>Employee</td>
+                  <td style={{backgroundColor: "rgb(245, 245, 245)", textAlign: "center"}}>Immediate Supervisor / Division Chief </td>
+                  <td style={{backgroundColor: "rgb(245, 245, 245)", textAlign: "center"}}>Head of Office / Director</td>
+              </tr>
+          </table>
+      </div>
+
+      
+      <button className='print-btn' onClick={() => window.print()}>PRINT</button>
+    </div>
+    </>
+  )
 }

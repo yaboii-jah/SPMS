@@ -50,7 +50,7 @@ export function UpdateForm ({computeFormAvg, computeAvgRating, dispatch, form}) 
                 </div>
                 <div>
                     <label htmlFor="">A</label>
-                    <input value={form.avg_per_form} type="number" className='timeliness' name='avg_per_form'readOnly/>
+                    <input value={(Number(form.avg_per_form)).toFixed(2)} type="number" className='timeliness' name='avg_per_form'readOnly/>
                 </div>
             </div>
         </div>

@@ -1,70 +1,135 @@
 import prisma from "../connection/prismaClient.js";
+import { successResponse, errorResponse } from '../utils/responseFormat.js';
 
 export async function addPerformance (performance, user_id, tx = prisma) {
-   performance.forEach(perf => {
+   performance['performance'].forEach(perf => {
       perf['user_id'] = Number(user_id)
       delete perf['id']
    })
 
-   await tx.performance.createMany({
-        data : performance
-   })
+   performance['ratings']['user_id'] = user_id
+    
+   try {
+      return await prisma.$transaction(async (tx)=> {
+         const performance_result = await tx.performance.createMany({
+            data : performance['performance']
+         })
+
+         if (performance_result.count === 0) {
+            throw new Error('No data is created')
+         }
+
+        const ratings = await prisma.ratings.upsert({ // this part wont update but it doesnt cause errors
+            where: { rating_id: performance['ratings']['rating_id']},
+            update: performance['ratings'],
+            create: performance['ratings'],
+         })
+
+         return new successResponse(true, null, "Performance successfully created")
+      })
+   } catch (error) {
+      console.error(error)
+      return new errorResponse(false, "Internal server error", 500)
+   } 
 }
 
 export async function updatePerformance (updatedPerformance, user_id, tx = prisma) {
-   const updates = updatedPerformance.map(perf => 
-      tx.performance.update({
-         where : { performance_id : perf.performance_id, user_id },
-         data : perf
-      })
-   )
+   try {
+      const updates = updatedPerformance.map(perf => 
+         tx.performance.update({
+            where : { performance_id : perf.performance_id, user_id },
+            data : perf
+         })
+      )
 
-   return Promise.all(updates)
+      const result = await Promise.all(updates)
+      return new successResponse(true, result, 'Performance updated')
+  } catch (error) {
+      console.error(error)
+      return new errorResponse(false, "Internal server error", 500)
+  } 
 }
 
 async function deletePerformance (Ids, user_id, tx = prisma) {
-   await tx.performance.deleteMany({
-      where : {
-         performance_id : {
-            in : Ids
-         },
-         user_id
+   try {
+      const result = await tx.performance.deleteMany({
+         where : {
+            performance_id : {
+               in : Ids
+            },
+            user_id
+         }
+      })
+
+      if (result.count === 0) {
+         return new errorResponse(false, 'No data were deleted', 409)
       }
-   })
+
+      return new successResponse(true, null, 'Performance successfully deleted')
+  } catch (error) {
+      console.error(error)
+      return new errorResponse(false, "Internal server error", 500)
+  } 
 }
 
 export async function fetchUserData (user_id) {
-   console.log(user_id)
-   return await prisma.performance.findMany({
-      where : {
-         user_id
+   try {
+      const result = await prisma.performance.findMany({
+         where : {
+            user_id
+         }
+      })
+
+      if (result.length === 0) {
+         return new errorResponse(false, 'Cannot find any data', 404)
       }
-  })
+
+      return new successResponse(true, result, 'Performance successfully retrieved')
+   } catch (error) {
+      console.error(error)
+      return new errorResponse(false, "Internal server error", 500)
+   }
+
 }
 
 export async function fetchUserRatings (user_id) {
-   return await prisma.ratings.findMany({
-      where : {
-         user_id 
+   try {
+      const result = await prisma.ratings.findMany({
+         where : {
+            user_id 
+         }
+      })
+
+      if (result.length === 0) {
+         return new errorResponse(false, 'Cannot find any data', 404)
       }
-  })
+      
+      return new successResponse(true, result, 'Ratings successfully retrieved')
+   } catch (error) {
+      console.error(error)
+      return new errorResponse(false, "Internal server error", 500)
+   }
+   
 }
 
 export async function dynamicQuery (data, user_id) {
    const userData = await fetchUserData(user_id)
    let dataToUpdate = []
    let dataToDelete = []
-   let dataToCreate = []
+   let dataToCreate = {
+      performance : [],
+      ratings : data['ratings']
+   }
 
-   for (const form of data) {
-      if (form.action === 'update' && userData.some(data => data.performance_id === form.performance_id) ) {
+   for (const form of data['performance']) {
+      if (form.action === 'update' && userData['data'].some(data => data.performance_id === form.performance_id) ) {
          delete form.action
          delete form['express-validator#contexts']
          delete form.id
          dataToUpdate.push({...form})
       }
 
-      if (form.action === 'delete' && userData.some(data => data.performance_id === form.performance_id)) {
+      if (form.action === 'delete' && userData['data'].some(data => data.performance_id === form.performance_id)) {
          dataToDelete.push(form.performance_id)
       }
 
@@ -72,25 +137,34 @@ export async function dynamicQuery (data, user_id) {
          delete form['express-validator#contexts']
          delete form.action
          delete form.id
-         dataToCreate.push(form)
+         dataToCreate.performance.push(form)
       }
    }
 
-   return await prisma.$transaction(async (tx)=> {
-      
-      if (dataToDelete.length > 0 ) {
-         await deletePerformance(dataToDelete, user_id, tx)
-      }
+   try {
+      return await prisma.$transaction(async (tx)=> {
+         if (dataToDelete.length > 0 ) {
+            const result = await deletePerformance(dataToDelete, user_id, tx)
+            
+            if (!result.success) throw new Error(result.message)
+         }
 
-      if (dataToUpdate.length > 0 ) {
-         await updatePerformance(dataToUpdate, user_id, tx)
-      }
+         if (dataToUpdate.length > 0 ) {
+            const result = await updatePerformance(dataToUpdate, user_id, tx)
+            if (!result.success) throw new Error(result.message)
+         }
 
-      if (dataToCreate.length > 0 ) {
-         await addPerformance(dataToCreate, user_id, tx)
-      }
-   })
+         if (dataToCreate.length > 0 ) {
+            await addPerformance(dataToCreate, user_id, tx)
+
+            if (!result.success) throw new Error(result.message)
+         }
+
+        return new successResponse(true, null, 'SPMS successfully updated')
+      }) 
+   } catch (error) {
+      console.error(error)
+      return new errorResponse(false, "Internal server error", 500)
+   }
 }
 
-
-// user_id is missing 

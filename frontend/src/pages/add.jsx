@@ -2,11 +2,15 @@ import '../pages/add.css'
 import { Header } from '../components/header'
 import { AddForm } from '../components/addForm'
 import { useReducer } from 'react'
-import { addPerformance, addRatings} from '../api/add'
+import { useNavigate } from 'react-router-dom'
+import { addPerformance} from '../api/add'
 import { initialState, reducer } from '../features/addReducer'
+import { useAuth } from '../contexts/authContext'
 
 export function Add () {
     const [state, dispatch] = useReducer(reducer, initialState);
+    const { accessToken, setAccessToken } = useAuth()
+    const navigate = useNavigate()
 
     function addForm () {
         dispatch({ type : 'ADD FORM'})
@@ -49,7 +53,7 @@ export function Add () {
     function computeFinalRating (e) {
         let avgSum = 0
         let rowNum = 0
-        let dataCopy = state.userData.map(data => (
+        let dataCopy = state.userData.map(data => ( 
             {...data}
         ))
 
@@ -61,12 +65,25 @@ export function Add () {
             }
         })
 
-        dispatch({ type : 'COMPUTE RATINGS', payload : {avgSum, rowNum, name : e.target.name, value : e.target.value, computeAvg : computeAvgRating}})
+        dispatch({ type : 'COMPUTE RATINGS', payload : {avgSum, rowNum, name : e.target.name, value : Number(e.target.value), computeRating : computeAvgRating}})
     }
 
     async function submitPerformance () {
-        await addPerformance(state.userData)
-        await addRatings(state.ratings)
+        const choice = confirm(" Are you sure you want to add performance? ")
+
+        if (choice) {
+            const response = await addPerformance({
+                performance : state.userData,
+                ratings : state.ratings
+                }, accessToken, setAccessToken)
+
+            if (!response.success) { 
+                return alert(response.message)
+            }
+
+            navigate("/view")
+        }
+      
     }
     
     return (
@@ -109,13 +126,12 @@ export function Add () {
                             <td>Strategic Priority</td>
                             <td>
                                 <select onChange={computeFinalRating} name="strat_obj" className='assigned_weight'>
-                                    
-                                    <option value=".30">30%</option>
-                                    <option value=".20">20%</option>
-                                    <option value=".10">10%</option>
+                                    <option value="0.3">30%</option>
+                                    <option value="0.2">20%</option>
+                                    <option value="0.1">10%</option>
                                 </select>
                             </td>
-                            <td>{state.ratings.strat_obj_final.toFixed(2)}</td>
+                            <td>{String(state.ratings.strat_obj_final)}</td>
                         </tr>
                         <tr>
                             <td>Core/Support Functions</td>
@@ -126,7 +142,7 @@ export function Add () {
                                     <option value=".90">90%</option>    
                                 </select>
                             </td>   
-                            <td>{state.ratings.core_sup_final.toFixed(2)}</td>
+                            <td>{String(state.ratings.core_sup_final)}</td>
                         </tr>
                         <tr>
                             <td>Unplanned Results</td>
@@ -135,14 +151,14 @@ export function Add () {
                                     <option value="0">0%</option>
                                     <option value=".10">10%</option>
                                 </select></td>
-                            <td>{state.ratings.unplanned_final.toFixed(2)}</td>
+                            <td>{String(state.ratings.unplanned_final)}</td>
                         </tr>
                     </table>
 
                     <table>
                         <tr>
                             <th>Total Overall Rating</th>
-                            <td>{state.ratings.overall_rating.toFixed(2)}</td>
+                            <td>{String(state.ratings.overall_rating)}</td>
                         </tr>
                         <tr>
                             <th>Adjective Rating</th>

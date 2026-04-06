@@ -9,7 +9,7 @@ import { View } from './pages/view'
 import { Notfound } from './pages/notFound'
 
 const router = createBrowserRouter([
-  {path: "/login", element: <Login/>},
+  {path: "/", element: <Login/>},
   {path: "/homepage", element: <Homepage/>},
   {path: "/profile", element: <Profile/>},
   {path: "/add", element: <Add/>},

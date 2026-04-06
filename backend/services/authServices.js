@@ -1,6 +1,7 @@
 import prisma from '../connection/prismaClient.js';
 import { errorHandler } from '../utils/asyncErrorHandler.js';
 import bcrypt from "bcrypt";
+import { successResponse, errorResponse } from '../utils/responseFormat.js';
 
 export async function createUser (user) {
     const result = await errorHandler ( () => prisma.users.create ({
@@ -20,23 +21,53 @@ export async function updateUser (user_id, details) {
 }
 
 export async function findUser (username) {
-    const result = await errorHandler(() => prisma.users.findUnique({
-        where : { username }
-    }))
+    try {
+        const result = await prisma.users.findUnique({
+            where : { username }
+        })
+        
+        if (!result) {
+            return new errorResponse(false, "Invalid Credentials", 404)
+        }
 
-    return result
+        return new successResponse(true, result, "User successfully found")
+    } catch (error) {
+        console.error("Error finding user", error)
+        return new errorResponse(false, "Internal server error", 500)
+    }
 }
  
 export async function comparePassword (password, userPassword) {
-    const result = await errorHandler(() => bcrypt.compare(password, userPassword))
+    try {
+        const result = await bcrypt.compare(password, userPassword)
+        
+        if (!result) { 
+            return new errorResponse(false, "Invalid credentials", 401)
+        }
 
-    return result
+        return new successResponse (true, result, "Valid credentials")
+    } catch (error) {
+        console.error("Error comparing password", error)
+        return new errorResponse(false, "Internal server error", 500)
+    }
+   
 }
 
 export async function fetchUserDetails (user_id) {
-    return prisma.users.findUnique({
-        where :{
-            user_id
+    try {
+        const result = await prisma.users.findUnique({
+            where :{
+                user_id
+            }
+        })
+ 
+        if (!result) {
+            return new errorResponse(false, 'Cannot find user', 404)
         }
-    })
+
+        return new successResponse(true, result, 'User successfully retrieved')
+    } catch (error) {
+        console.error("Error finding user", error)
+        return new errorResponse(false, "Internal server error", 500)
+    }
 }

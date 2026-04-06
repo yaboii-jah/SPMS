@@ -3,7 +3,7 @@ import { validationResult } from "express-validator";
 
 export function validationResultChecker(req, res, next) {
   const error = validationResult(req)
-  console.log(error)
+  
   if (error.isEmpty()) {
     return next();
   }

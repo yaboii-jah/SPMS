@@ -1,124 +1,134 @@
-body {
+
+.form-container {
+    display: flex;
+    border: none;
+    width: 190mm;
+}
+
+.ipcr-form {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    min-height: 297mm; 
+    border: 2px solid black;
+    padding: 25px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
 }
 
-p {
-    margin: 0;
-}
-
-h5 {
-    margin: 0;
-}
-
-.agency {
+.view-agency {
     display: flex;
+    align-items: center;
     gap: 12px;
     margin-bottom: 10px;
 }
 
-.agency-name {
-    align-content: center;
-    margin-left: 30px;
-}
-
-.agency-logo {
+.view-agency-logo {
     width: 70px;
     height: 60px;
 }
 
-.form {
-    display: flex;
-    flex-direction: column;
-    border-style: solid;
-    border-width: 2px;
-    width: 250mm;
-    padding: 25px;
-}
-
-.header {
-    font-size: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-}
-
-h4 {
-    margin-left: 110px;
-    margin-bottom: 5px;
-
-}
-
-.header .name, .header .department, .header .period {
+.view-agency-name {
     font-weight: bold;
+    font-size: 18px;
+    margin-left: 10px;
 }
 
-.line {
-    width: 100px;
-    border-bottom-style: solid;
-    border-width: 1px;
-
-}
-
-.ipcr-container {
-    font-size: 15px;
-    font-family: Arial, sans-serif;
-    margin: 20px auto;
-    margin-top: -20 px;
-    line-height: 2;
-    text-align: center;/* Provides space for the underlines */
-}
-
-h4 {
+.view-ipcr-container {
+    font-size: 14px;
     text-align: center;
-    font-weight: bold;
-    text-transform: uppercase;
-    margin-bottom: 20   px;
+    line-height: 1.8;
+    margin: 20px 0;
 }
 
-/* Signature block alignment */
-.signature-section {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px;
+.view-ipcr-container strong {
+    text-decoration: underline;
 }
 
-.signature-block {
-  width: 250px;
-  text-align: center;
-}
-
-.signature-line {
-  border-bottom: 2px solid black;
-  margin-bottom: 5px;
-}
-
-.label {
-  font-size: 0.9em;
-  margin-bottom: 10px;
-}
-
-.date-row {
-  text-align: left;
-}
-
-.date-line {
-  width: 150px;
-}
-
-.date {
+.view-signature-section {
     display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
 }
 
-table, th, td {
-  border: 1px solid black;
-  border-collapse: collapse;
-  font-size: 13px;
+.view-signature-block {
+    width: 250px;
+    text-align: center;
 }
 
+.view-signature-line {
+    border-bottom: 2px solid black;
+    margin-bottom: 5px;
+}
 
+.view-label {
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
 
+.view-date-row {
+    text-align: left;
+}
 
+.view-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    font-size: 13px;
+}
+
+.view-table th,
+.view-table td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+}
+
+.view-table th {
+    background-color: rgb(224, 224, 224);
+    font-weight: bold;
+    text-align: center;
+}
+
+.view-small-table {
+    width: auto;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.view-small-table th,
+.view-small-table td {
+    border: 1px solid black;
+    padding: 6px;
+    text-align: center;
+    font-size: 13px;
+    background-color: rgb(245, 245, 245);
+}
+
+.print-btn{
+    width: 100%;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    background-color: black;
+    color: white;
+    letter-spacing: 6px;
+    cursor: pointer;
+}
+
+.print-btn:hover {
+    opacity: 0.9;
+}
+
+@media print {
+    .form-container {
+        width: 200mm;
+        min-height: 297mm;
+        padding: 20px;
+    }
+    .print-button {
+        display: none;
+        color: black;
+    }
+}

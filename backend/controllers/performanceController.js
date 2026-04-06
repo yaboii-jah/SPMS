@@ -3,33 +3,41 @@ import { successResponse, errorResponse } from "../utils/responseFormat.js";
 import { errorHandler } from "../utils/asyncErrorHandler.js";
 
 export async function add (req, res) {
-    const result = await errorHandler(() => addPerformance(req.body, req.user.user_id))
+    const result = await addPerformance(req.body, req.user.user_id)
 
     if (!result.success) {
-        return res.status(500).send(new errorResponse(false, result.message, 'INTERNAL_SERVER_ERROR'))
+        return res.status(result.error).send(new errorResponse(false, result.message, result.error))
     }
 
-    res.status(201).send(new successResponse(true, result.data, 'SPMS Successfully Created'))
+    res.status(201).send(new successResponse(true, result.data, result.message))
 }
 
 export async function update (req, res) {
-   const result = await errorHandler(() => dynamicQuery(req.body, req.user.user_id))
+   const result = await dynamicQuery(req.body, req.user.user_id)
 
    if (!result.success) {
-        return res.status(500).send(new errorResponse(false, result.message, 'INTERNAL_SERVER_ERROR'))
+        return res.status(result.error).send(new errorResponse(false, result.message, result.error))
    }
 
-   res.status(201).send(new successResponse(true, result.data, 'SPMS Successfully Updated'))
+   res.status(201).send(new successResponse(true, null, 'SPMS successfully updated'))
 }
 
 export async function fetchSpms (req, res) {
-   const result = await errorHandler(() => fetchUserData(req.user.user_id))
+   const result = await fetchUserData(req.user.user_id)
+
+   if (!result.success) {
+        return res.status(result.error).send(new errorResponse(false, result.message, result.error))
+    }
    
-   res.status(200).send(new successResponse(true, result.data, 'Performance Succesfully Retrieved'))
+   res.status(200).send(new successResponse(true, result.data, 'Performance successfully retrieved'))
 }
 
 export async function fetchRatings (req, res) {
-    const result = await errorHandler(() => fetchUserRatings(req.user.user_id))
+    const result = await fetchUserRatings(req.user.user_id)
 
+    if (!result.success) {
+        return res.status(result.error).send(new errorResponse(false, result.message, result.error))
+    }
+   
     res.status(200).send(new successResponse(true, result.data, 'Ratings Successfully Retrieved'))
 }

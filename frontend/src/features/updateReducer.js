@@ -22,13 +22,12 @@ function computeFinalRating (userData, weight, name) {
 
     userData.forEach(data => {
         if (data.category === name) {
-            console.log(data.category)
             avgSum += Number(data['avg_per_form'])
-            rowNum++
+            rowNum++    
         }
     })
-
-    return avgSum / rowNum ? (avgSum / rowNum) * weight : 0
+  
+    return avgSum / rowNum ? Math.round(((avgSum / rowNum) * weight) * 100) / 100 : 0
 }
 
 function conditionalUpdate (request, form, id, name, value) {
@@ -45,6 +44,9 @@ function conditionalUpdate (request, form, id, name, value) {
                 id: id,
                 performance_id: form.performance_id,
                 action: 'update',
+                timeliness: form.timeliness,
+                quality: form.quality,
+                efficiency: form.efficiency,
                 [name]: value
             }
         ];
@@ -72,7 +74,7 @@ export function reducer(state, action) {
                     quality : 0,
                     efficiency : 0,
                     timeliness : 0,
-                    avg_per_form : 0,
+                    avg_per_form : "",
                     id: action.payload
                 }],
 
@@ -85,7 +87,7 @@ export function reducer(state, action) {
                     quality : 0,
                     efficiency : 0,
                     timeliness : 0,
-                    avg_per_form : 0,
+                    avg_per_form : "",
                     id: action.payload
                 }]
             }
@@ -97,11 +99,11 @@ export function reducer(state, action) {
             [...requestCopy, { ['performance_id'] : action.payload.form['performance_id'], ['action'] : 'delete'}] :
             requestCopy.filter(r => r.id !== action.payload.id)
 
-            let ratingsCopy = {...state.ratings, ['avg_rating'] : action.payload.computeRating(userDataCopy).toFixed(2), ['strat_obj_final'] : computeFinalRating(userDataCopy, state.ratings['strat_obj_weight'], 'strat_obj'),
+            let ratingsCopy = {...state.ratings, ['avg_rating'] : Math.round((action.payload.computeRating(userDataCopy)) * 100 ) / 100, ['strat_obj_final'] : computeFinalRating(userDataCopy, state.ratings['strat_obj_weight'], 'strat_obj'),
                 ['core_sup_final'] : computeFinalRating(userDataCopy, state.ratings['core_sup_weight'], 'core_sup'), ['unplanned_final'] : computeFinalRating(userDataCopy, state.ratings['unplanned_weight'], 'unplanned')
             }
 
-            ratingsCopy = {...ratingsCopy, ['overall_rating'] : ratingsCopy['core_sup_final'] + ratingsCopy['strat_obj_final'] + ratingsCopy['unplanned_final']}
+            ratingsCopy = {...ratingsCopy, ['overall_rating'] : Math.round((ratingsCopy['core_sup_final'] + ratingsCopy['strat_obj_final'] + ratingsCopy['unplanned_final']) * 100) / 100}
 
             ratingsCopy = {...ratingsCopy, ['adjective_rating'] : ratingsCopy.overall_rating >= 5 ? 'OUTSTANDING' : ratingsCopy.overall_rating >= 4 ? 'VERY SATISFACTORY' : ratingsCopy.overall_rating >= 3 ? 'SATISFACTORY' : ratingsCopy.overall_rating >= 2 ? 'UNSATISFACTORY' : 'POOR'}
 
@@ -129,20 +131,18 @@ export function reducer(state, action) {
             requestCopy = conditionalUpdate(requestCopy, action.payload.form, action.payload.id, action.payload.name, action.payload.value)
             
             requestCopy = requestCopy.map(r => 
-                r.id === action.payload.id && r.action === 'update' ? {...r, ['avg_per_form'] : action.payload.computeAvg(r)} : r
+                r.id === action.payload.id ? {...r, ['avg_per_form'] : action.payload.computeAvg(r)} : r
             )
 
-            let ratingsCopy = {...state.ratings, ['avg_rating'] : action.payload.computeRating(userDataCopy).toFixed(2), ['strat_obj_final'] : computeFinalRating(userDataCopy, state.ratings['strat_obj_weight'], 'strat_obj'),
+            let ratingsCopy = {...state.ratings, ['avg_rating'] : Math.round((action.payload.computeRating(userDataCopy)) * 100 ) / 100, ['strat_obj_final'] : computeFinalRating(userDataCopy, state.ratings['strat_obj_weight'], 'strat_obj'),
                 ['core_sup_final'] : computeFinalRating(userDataCopy, state.ratings['core_sup_weight'], 'core_sup'), ['unplanned_final'] : computeFinalRating(userDataCopy, state.ratings['unplanned_weight'], 'unplanned')
             }
 
-            console.log(ratingsCopy)
-
-            ratingsCopy = {...ratingsCopy, ['overall_rating'] : ratingsCopy['core_sup_final'] + ratingsCopy['strat_obj_final'] + ratingsCopy['unplanned_final']}
+            ratingsCopy = {...ratingsCopy, ['overall_rating'] : Math.round((ratingsCopy['core_sup_final'] + ratingsCopy['strat_obj_final'] + ratingsCopy['unplanned_final']) * 100) / 100 }
 
             ratingsCopy = {...ratingsCopy, ['adjective_rating'] : ratingsCopy.overall_rating >= 5 ? 'OUTSTANDING' : ratingsCopy.overall_rating >= 4 ? 'VERY SATISFACTORY' : ratingsCopy.overall_rating >= 3 ? 'SATISFACTORY' : ratingsCopy.overall_rating >= 2 ? 'UNSATISFACTORY' : 'POOR'}
 
-            return {
+            return { 
                 ...state,
                 userData : userDataCopy,
                 ratings : ratingsCopy,
@@ -151,10 +151,10 @@ export function reducer(state, action) {
         }
 
         case 'COMPUTE RATINGS' : {
-            let ratingsCopy = {...state.ratings, ['avg_rating'] : action.payload.computeAvg(userDataCopy).toFixed(2), [`${action.payload.name}_final`] : Number(action.payload.avgSum / action.payload.rowNum) ? (action.payload.avgSum / action.payload.rowNum) * Number(action.payload.value) : 0, 
+            let ratingsCopy = {...state.ratings, ['avg_rating'] : Math.round((action.payload.computeRating(userDataCopy)) * 100 ) / 100, [`${action.payload.name}_final`] : action.payload.avgSum / action.payload.rowNum ? Math.round(((action.payload.avgSum / action.payload.rowNum) * action.payload.value) * 100 ) / 100 : 0, 
             [`${action.payload.name}_weight`] : action.payload.value}
             
-            ratingsCopy = {...ratingsCopy, ['overall_rating'] : ratingsCopy['core_sup_final'] + ratingsCopy['strat_obj_final'] + ratingsCopy['unplanned_final']}
+            ratingsCopy = {...ratingsCopy, ['overall_rating'] : Math.round((ratingsCopy['core_sup_final'] + ratingsCopy['strat_obj_final'] + ratingsCopy['unplanned_final']) * 100) / 100 }
 
             ratingsCopy = {...ratingsCopy, ['adjective_rating'] : ratingsCopy.overall_rating >= 5 ? 'OUTSTANDING' : ratingsCopy.overall_rating >= 4 ? 'VERY SATISFACTORY' : ratingsCopy.overall_rating >= 3 ? 'SATISFACTORY' : ratingsCopy.overall_rating >= 2 ? 'UNSATISFACTORY' : 'POOR'}
 

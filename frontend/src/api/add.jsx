@@ -1,21 +1,40 @@
-export async function addPerformance (performance) { 
-    await fetch('http://localhost:3005/performance/api/add', {
-        method : 'POST',
-        headers: {
-            "Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMCwicm9sZSI6IklQQ1IiLCJpYXQiOjE3NzQ5MTY4OTcsImV4cCI6MTc3NTAwMzI5N30.4aQvpDrIJ-5rTJ6BNeWbDYnovZvpXciBetr8sYBa628`,
-            "Content-Type" : "application/json"
-        },
-        body: JSON.stringify(performance)
-    });
+import { successResponse, errorResponse } from "../utils/responseFormat";
+import { refresh } from "./refresh";
+
+export async function addPerformance (performance, token, setToken) {
+    try {
+        const result = await fetch('http://localhost:3005/performance/api/add', {
+            method : 'POST',
+            headers: {
+                "Authorization" : `Bearer ${token}`,
+                "Content-Type" : "application/json"
+            },
+            credentials : "include",
+            body: JSON.stringify(performance)
+        });
+
+        const response = await result.json()
+
+        if (response.error === 403) {
+            const result = await refresh(setToken)
+
+            if (!result.success) {
+                return new errorResponse(false, result.message)
+            }
+
+            const newToken = result.data;
+
+            return await addPerformance(performance, newToken, setToken);
+        }
+
+        if (!response.success) {
+            return new errorResponse(false, response.message)
+        }
+
+        return new successResponse(true, null, response.message)
+    } catch (error) {
+        console.error("Internal Server Error", error)
+        return new errorResponse(false, "Internal Server Error")
+    }
 }
 
-export async function addRatings (ratings) { 
-    await fetch('http://localhost:3005/ratings/api/add', {
-        method : 'POST',
-        headers: {
-            "Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMCwicm9sZSI6IklQQ1IiLCJpYXQiOjE3NzQ5MTY4OTcsImV4cCI6MTc3NTAwMzI5N30.4aQvpDrIJ-5rTJ6BNeWbDYnovZvpXciBetr8sYBa628`,
-            "Content-Type" : "application/json"
-        },
-        body: JSON.stringify(ratings)
-    });
-}

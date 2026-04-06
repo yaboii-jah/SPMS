@@ -9,7 +9,7 @@ import { validationResultChecker} from "../middlewares/validatorResult.js"
 export const routes = new Router ();
 
 routes.use(verifyToken)
-routes.post('/add', bodyValidator, performanceValidator, validationResultChecker, add)
-routes.post('/update', bodyValidator, updateValidator, validationResultChecker, update)
+routes.post('/add', bodyValidator,     add) // add performanceValidator, validationResultChecker later
+routes.post('/update', bodyValidator,     update) // add performanceValidator, validationResultChecker later
 routes.get('/fetchSpms', fetchSpms)
 routes.get('/fetchRatings', fetchRatings)

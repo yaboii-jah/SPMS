@@ -2,24 +2,43 @@ import '../pages/add.css'
 import { useEffect, useReducer} from 'react';
 import { Header } from '../components/header';
 import { UpdateForm } from '../components/updateForm';
-import { updatePerformance, updateRatings } from '../api/update';
+import { useNavigate } from 'react-router-dom'
+import { updatePerformance } from '../api/update';
 import { initialState, reducer } from '../features/updateReducer'
+import { useAuth } from '../contexts/authContext'
+import { refresh } from '../api/refresh'
+import { errorResponse } from "../utils/responseFormat";
 
 export function Update () {
-  
     const [state, dispatch] = useReducer(reducer, initialState);
+    const { accessToken, setAccessToken } = useAuth()
+    const navigate = useNavigate()
 
+    // fix these use effect, make it use context
     useEffect(() => {
-        async function fetchUserData ()  {
+        async function fetchUserData (token = accessToken)  {
             let data = await fetch('http://localhost:3005/performance/api/fetchSpms', {
                 method : 'GET',
                 headers : {
-                    "Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMCwicm9sZSI6IklQQ1IiLCJpYXQiOjE3NzQ5MTY4OTcsImV4cCI6MTc3NTAwMzI5N30.4aQvpDrIJ-5rTJ6BNeWbDYnovZvpXciBetr8sYBa628`,
+                    "Authorization" : `Bearer ${token}`,
                     "Content-Type" : "application/json"
-                }
+                },
+                credentials : "include"
             })
 
             const result = await  data.json()
+
+            if (result.error === 403) {
+                const result = await refresh(setAccessToken)
+    
+                if (!result.success) {
+                    return new errorResponse(false, result.message)
+                }
+    
+                const newToken = result.data;
+    
+                return await fetchUserData(newToken);
+            }
 
             const updatedSpms = result.data.map(form => {
                 return {...form, ['id'] : crypto.randomUUID() }
@@ -28,16 +47,29 @@ export function Update () {
             data = await fetch('http://localhost:3005/performance/api/fetchRatings', {
                 method : 'GET',
                 headers : {
-                    "Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMCwicm9sZSI6IklQQ1IiLCJpYXQiOjE3NzQ5MTY4OTcsImV4cCI6MTc3NTAwMzI5N30.4aQvpDrIJ-5rTJ6BNeWbDYnovZvpXciBetr8sYBa628`,
+                    "Authorization" : `Bearer ${token}`,
                     "Content-Type" : "application/json"
-                }
-            })  
+                },
+                credentials : "include"
+
+            })   
             
-            const ratings = await  data.json()
+            const ratings = await data.json()
+
+            if (ratings.error === 403) {
+                const result = await refresh(setAccessToken)
+    
+                if (!result.success) {
+                    return new errorResponse(false, result.message)
+                }
+    
+                const newToken = result.data;
+    
+                return await fetchUserData(newToken);
+            }
             
             for (const rate of Object.keys(ratings.data[0])) {
                 if (rate !== 'adjective_rating' && typeof ratings.data[0][rate] === 'string' ) {
-                    console.log(parseFloat(ratings.data[0][rate]))
                     ratings.data[0][rate] = parseFloat(ratings.data[0][rate])
                 }
             }
@@ -71,9 +103,8 @@ export function Update () {
         }
 
         if (count === 0) return 0;
-        
-        console.log(String(sum / count))
-        return String(sum / count);
+
+        return String((sum / count).toFixed(2));
     }
 
     function computeAvgRating (userData) {
@@ -103,15 +134,23 @@ export function Update () {
             }
         })
         
-       dispatch({ type : 'COMPUTE RATINGS', payload : {avgSum, rowNum, name : e.target.name, value : e.target.value, computeAvg : computeAvgRating}})
+       dispatch({ type : 'COMPUTE RATINGS', payload : {avgSum, rowNum, name : e.target.name, value : Number(e.target.value), computeRating : computeAvgRating}})
     }
 
     async function update() {
-        //await updatePerformance(state.request)
-        //await updateRatings(state.ratings)
-        console.log(state.request)
-        console.log(state.ratings)
-        
+        const choice = confirm(" Are you sure you want to update performance? ")
+
+        if (choice) {
+            const response = await updatePerformance({
+                performance : state.request,
+                ratings : state.ratings
+                }, accessToken, setAccessToken)
+
+            if (!response.success) { 
+                return alert(response.message)
+            }
+            //navigate("/view")
+        }        
     }
 
     return (    
@@ -152,12 +191,12 @@ export function Update () {
                             <td>Strategic Priority</td>
                             <td>
                                 <select onChange={computeFinalRating} value={String(state.ratings.strat_obj_weight)} name="strat_obj" className='assigned_weight'>
-                                    <option value="0.1">10%</option>
-                                    <option value="0.2">20%</option>
                                     <option value="0.3">30%</option>
+                                    <option value="0.2">20%</option>
+                                    <option value="0.1">10%</option>
                                 </select>
                             </td>
-                            <td>{state.ratings.strat_obj_final.toFixed(2)}</td>
+                            <td>{String(state.ratings.strat_obj_final)}</td>
                         </tr>
                         <tr>
                             <td>Core/Support Functions</td>
@@ -168,7 +207,7 @@ export function Update () {
                                     <option value="0.9">90%</option>    
                                 </select>
                             </td>   
-                            <td>{state.ratings.core_sup_final.toFixed(2)}</td>
+                            <td>{String(state.ratings.core_sup_final)}</td>
                         </tr>
                         <tr>
                             <td>Unplanned Results</td>
@@ -177,14 +216,14 @@ export function Update () {
                                     <option value="0">0%</option>
                                     <option value="0.1">10%</option>
                                 </select></td>
-                            <td>{state.ratings.unplanned_final.toFixed(2)}</td>
+                            <td>{String(state.ratings.unplanned_final)}</td>
                         </tr>
                     </table>
 
                     <table>
                         <tr>
                             <th>Total Overall Rating</th>
-                            <td>{state.ratings.overall_rating.toFixed(2)}</td>
+                            <td>{String(state.ratings.overall_rating)}</td>
                         </tr>
                         <tr>
                             <th>Adjective Rating</th>

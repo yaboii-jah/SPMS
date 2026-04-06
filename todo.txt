@@ -1,0 +1,17 @@
+1. Create a react context for access token so it can be used to any protected endpoints
+
+2. Create a refresh endpoint on backend so when the access token expired, it just send a 
+   unauthorized response on frontend and frontend and it will call refresh endpoint on 
+   backend that checks if refreshtoken is expired ( will redirect to login page ) or valid 
+   ( will generate another access token that will be send to frontend and be store at the 
+   centralized react context access token container)
+
+3. Add a logout end point which removes the refresh token cookie 
+
+3. Fix the error handling of performance/api/add, update, fetchSpms and fetchRatings (move fetchRatings to ratings/api endpoint)
+
+4. Add the update for profile on frontend and make it work on backend
+
+5. Finalize the UI/UX for user side flow and make it responsive
+
+6. plan the admin side
