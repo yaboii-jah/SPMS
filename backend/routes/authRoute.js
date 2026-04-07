@@ -6,6 +6,7 @@ import { hashPassword } from "../utils/hashPassword.js";
 import { bodyValidator} from "../middlewares/bodyValidator.js";
 import { checkEquality } from "../middlewares/dataEquality.js";
 import { verifyToken } from "../middlewares/userAuthenticate.js";
+import { verifiedToken } from "../controllers/performanceController.js";
 
 export const routes = new Router ();
 
@@ -14,3 +15,4 @@ routes.post('/login', bodyValidator, logInValidator, validationResultChecker, lo
 routes.post('/refresh', refresh)
 routes.patch('/update/:id', verifyToken, bodyValidator, routeParamsValidator, updateValidator, validationResultChecker, checkEquality, hashPassword, update)
 routes.get('/fetchUser', verifyToken, fetchUser)
+routes.post('/verifyToken', verifiedToken)

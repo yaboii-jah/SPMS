@@ -150,7 +150,7 @@ export function Update () {
             if (!response.success) { 
                 return alert(response.message)
             }
-            //navigate("/view")
+            navigate("/view")
         }        
     }
 

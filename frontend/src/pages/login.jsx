@@ -1,4 +1,4 @@
-import { useRef} from 'react';
+import { useEffect, useRef} from 'react';
 import { LogUser } from '../api/login'
 import { useNavigate} from 'react-router-dom'
 import { useAuth } from "../contexts/auth/useAuth";
@@ -6,10 +6,16 @@ import '../pages/login.css'
 import logo from '../assets/PCGG-Logo.png'
 
 export function Login () {
-    const { setAccessToken } = useAuth()
+    const { accessToken, setAccessToken } = useAuth()
     const Username = useRef(null)
     const Password = useRef(null)
     const navigate = useNavigate()
+
+    useEffect(() => {
+        if (accessToken) {
+            navigate("/homepage");
+        }
+    }, [accessToken]);
 
     async function login () {
         try {
@@ -20,7 +26,6 @@ export function Login () {
             }
 
             setAccessToken(result.data)
-            navigate("/homepage")
        } catch (error) {
            console.log(error)
            return alert("Internal Server Error")

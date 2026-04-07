@@ -257,7 +257,7 @@ export function View() {
               <tr>
                   <td colSpan={2}></td>
                   <td colSpan={4} style={{backgroundColor: "rgb(221, 221, 221)", textAlign: "center"}}>Average Rating</td>
-                  <td style={{backgroundColor: "rgb(248, 248, 248)", fontWeight: "bold"}}>{userRatings.avg_rating}</td>
+                  <td style={{backgroundColor: "rgb(248, 248, 248)", fontWeight: "bold"}}>{String(userRatings.avg_rating).padEnd(4, '0')}</td>
                   <td></td>
               </tr>
           </table>

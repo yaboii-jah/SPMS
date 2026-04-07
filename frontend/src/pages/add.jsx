@@ -12,8 +12,6 @@ export function Add () {
     const { accessToken, setAccessToken } = useAuth()
     const navigate = useNavigate()
 
-    console.log(state.ratings)
-
     function addForm () {
         dispatch({ type : 'ADD FORM'})
     }
@@ -38,7 +36,7 @@ export function Add () {
 
         if (count === 0) return 0;
          
-        return String((sum / count).toFixed(3));
+        return String((sum / count).toFixed(2));
     }
 
     function computeAvgRating (userData) {
