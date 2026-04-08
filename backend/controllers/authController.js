@@ -16,7 +16,7 @@ export async function registerUser (req, res) {
   res.status(201).send(new successResponse(true, result.data, 'User Created Successfully'))
 } 
 
-export async function logIn (req, res) {z
+export async function logIn (req, res) {
   const { username, password} = req.body
   
   const result = await findUser(username)

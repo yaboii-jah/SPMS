@@ -2,7 +2,7 @@
 .form-container {
     display: flex;
     border: none;
-    width: 190mm;
+    width: 240mm;
 }
 
 .ipcr-form {
@@ -123,7 +123,7 @@
 
 @media print {
     .form-container {
-        width: 200mm;
+        width: 260mm;
         min-height: 297mm;
         padding: 20px;
     }

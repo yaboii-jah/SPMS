@@ -41,3 +41,7 @@ export async function fetchRatings (req, res) {
    
     res.status(200).send(new successResponse(true, result.data, 'Ratings Successfully Retrieved'))
 }
+
+export function verifiedToken (req, res) {
+    res.send(new successResponse(true, null, 'Token successfully validated'))
+}

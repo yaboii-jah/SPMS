@@ -2,7 +2,7 @@ import './view.css'
 import { useEffect, useState} from 'react'
 import logo from '../assets/PCGG-Logo.png'
 import { UserPerformance } from '../components/userPerformance'
-import { useAuth } from '../contexts/authContext'
+import { useAuth } from '../contexts/auth/useAuth'
 import { refresh } from '../api/refresh'
 import { errorResponse } from "../utils/responseFormat";
 
@@ -40,6 +40,19 @@ export function View() {
 
             const perf_result = await performance.json()
 
+            if (perf_result.error === 403) {
+                console.log('test')
+                const result = await refresh(setAccessToken)
+    
+                if (!result.success) {
+                    return new errorResponse(false, result.message)
+                }
+    
+                const newToken = result.data;
+    
+                return await fetchUserData(newToken);
+            }
+
             perf_result.data.forEach(perf => {
                
                 if (perf.category === 'strat_obj') stratCopy.push(perf)
@@ -60,6 +73,7 @@ export function View() {
             const rate_result = await ratings.json()
 
             if (rate_result.error === 403) {
+                console.log('test')
                 const result = await refresh(setAccessToken)
     
                 if (!result.success) {
@@ -243,7 +257,7 @@ export function View() {
               <tr>
                   <td colSpan={2}></td>
                   <td colSpan={4} style={{backgroundColor: "rgb(221, 221, 221)", textAlign: "center"}}>Average Rating</td>
-                  <td style={{backgroundColor: "rgb(248, 248, 248)", fontWeight: "bold"}}>{userRatings.avg_rating}</td>
+                  <td style={{backgroundColor: "rgb(248, 248, 248)", fontWeight: "bold"}}>{String(userRatings.avg_rating).padEnd(4, '0')}</td>
                   <td></td>
               </tr>
           </table>

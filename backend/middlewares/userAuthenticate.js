@@ -23,7 +23,7 @@ export async function verifyToken (req, res, next) {
 
   } catch (error) {
     console.error("Error verifying token", error)
-    return res.status(403).json(new errorResponse(false, 'Provided token is invalid', 403))
+    res.status(403).json(new errorResponse(false, 'Provided token is invalid', 403))
 
   }
 }

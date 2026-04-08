@@ -1,5 +1,5 @@
 import './App.css'
-import { createBrowserRouter, RouterProvider} from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import { Login } from './pages/login'
 import { Homepage } from './pages/homepage'
 import { Add } from './pages/add'
@@ -7,21 +7,23 @@ import { Profile } from './pages/profile'
 import { Update } from './pages/update'
 import { View } from './pages/view'
 import { Notfound } from './pages/notFound'
-
-const router = createBrowserRouter([
-  {path: "/", element: <Login/>},
-  {path: "/homepage", element: <Homepage/>},
-  {path: "/profile", element: <Profile/>},
-  {path: "/add", element: <Add/>},
-  {path: "/update", element: <Update/>},
-  {path: "/view", element: <View/>},
-  {path: "*", element: <Notfound/>}
-])
+import ProtectedRoute from './components/protectedRoute'
 
 function App() {
   return (
     <div className='app-container'>
-      <RouterProvider router={router}/>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+
+          <Route path="/homepage" element={<ProtectedRoute children={<Homepage/>}/>} />
+          <Route path="/view" element={<ProtectedRoute children={<View />}/>} />
+          <Route path="/profile" element={<ProtectedRoute children={<Profile />}/>} />
+          <Route path="/update" element={<ProtectedRoute children={<Update />}/>} />
+          <Route path="/homepage" element={<ProtectedRoute children={<Homepage />}/>} />
+          <Route path="/add" element={<ProtectedRoute children={<Add />}/>} />
+        </Routes>
+      </Router>
     </div>
   )
 }

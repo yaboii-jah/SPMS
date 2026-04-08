@@ -2,25 +2,33 @@ import prisma from "../connection/prismaClient.js";
 import { successResponse, errorResponse } from '../utils/responseFormat.js';
 
 export async function addPerformance (performance, user_id, tx = prisma) {
-   performance['performance'].forEach(perf => {
-      perf['user_id'] = Number(user_id)
-      delete perf['id']
-   })
+   console.log(performance['performance'])
+   if (performance['performance'].length !== 0 ) {
+      performance['performance'].forEach(perf => {
+         perf['user_id'] = Number(user_id)
+         delete perf['id']
+      })
+   }
+
+   const rating_id = performance['ratings']['rating_id'] || 0
 
    performance['ratings']['user_id'] = user_id
+   delete performance['ratings']['rating_id']
     
    try {
       return await prisma.$transaction(async (tx)=> {
-         const performance_result = await tx.performance.createMany({
-            data : performance['performance']
-         })
+         if (performance['performance'].length !== 0 ) {
+            const performance_result = await tx.performance.createMany({
+               data : performance['performance']
+            })
 
-         if (performance_result.count === 0) {
-            throw new Error('No data is created')
+            if (performance_result.count === 0) {
+               throw new Error('No data is created')
+            }
          }
 
-        const ratings = await prisma.ratings.upsert({ // this part wont update but it doesnt cause errors
-            where: { rating_id: performance['ratings']['rating_id']},
+         await prisma.ratings.upsert({ // this part wont update but it doesnt cause errors
+            where: { rating_id: rating_id},
             update: performance['ratings'],
             create: performance['ratings'],
          })
@@ -154,12 +162,10 @@ export async function dynamicQuery (data, user_id) {
             if (!result.success) throw new Error(result.message)
          }
 
-         if (dataToCreate.length > 0 ) {
-            await addPerformance(dataToCreate, user_id, tx)
+         const result = await addPerformance(dataToCreate, user_id, tx)
 
-            if (!result.success) throw new Error(result.message)
-         }
-
+         if (!result.success) throw new Error(result.message)
+         
         return new successResponse(true, null, 'SPMS successfully updated')
       }) 
    } catch (error) {
