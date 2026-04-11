@@ -3,6 +3,8 @@ export function UserPerformance ({strategy}) {
     <tr> 
       <td>{strategy.key_perf}</td>
       <td>{strategy.succes_indic}</td>
+      <td>{strategy.succes_indic}</td>
+      <td>{strategy.succes_indic}</td>
       <td>{strategy.actual_accomp}</td>
       <td style={{paddingTop: 25, paddingBottom: 25}}>{strategy.quality}</td>
       <td>{strategy.efficiency}</td>

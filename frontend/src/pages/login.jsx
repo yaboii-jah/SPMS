@@ -6,9 +6,10 @@ import '../pages/login.css'
 import logo from '../assets/PCGG-Logo.png'
 
 export function Login () {
-    const { accessToken, setAccessToken } = useAuth()
+    const { accessToken, setAccessToken, setUserRole } = useAuth()
     const Username = useRef(null)
     const Password = useRef(null)
+
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -25,7 +26,8 @@ export function Login () {
                 return alert(result.message)
             }
 
-            setAccessToken(result.data)
+            setAccessToken(result.data.token)
+            setUserRole(result.data.role)
        } catch (error) {
            console.log(error)
            return alert("Internal Server Error")

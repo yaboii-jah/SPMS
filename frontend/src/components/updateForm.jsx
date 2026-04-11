@@ -1,6 +1,6 @@
 import '../components/addForm.css'
 
-export function UpdateForm ({computeFormAvg, computeAvgRating, dispatch, form}) {
+export function UpdateForm ({computeFormAvg, computeAvgRating, dispatch, form, role}) {
     function handleChange (e) {
         let { name, value } = e.target
 
@@ -33,6 +33,13 @@ export function UpdateForm ({computeFormAvg, computeAvgRating, dispatch, form}) 
                 <input value={form.succes_indic} type="text" className='succes_indic' name='succes_indic' onChange={handleChange} />
                 <input value={form.actual_accomp} type="text" className='actual_accomp' name='actual_accomp'onChange={handleChange} />
             </div>
+
+            { role === 'OPCR' || role === 'DPCR' ? 
+                <div className='additional'>
+                    <input type="text" value={form.alloted_budget} className='alloted_budget' name='alloted_budget' onChange={handleChange}/>
+                    <input type="text" value={form.division_individuals_accountable} className='accountable' name='division_individuals_accountable' onChange={handleChange}/>
+                </div> : ""
+            }
 
 
             <div className='bottom'>

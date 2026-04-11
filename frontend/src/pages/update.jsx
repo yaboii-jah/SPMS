@@ -11,10 +11,9 @@ import { errorResponse } from "../utils/responseFormat";
 
 export function Update () {
     const [state, dispatch] = useReducer(reducer, initialState);
-    const { accessToken, setAccessToken } = useAuth()
+    const { accessToken, setAccessToken, userRole} = useAuth()
     const navigate = useNavigate()
 
-    // fix these use effect, make it use context
     useEffect(() => {
         async function fetchUserData (token = accessToken)  {
             let data = await fetch('http://localhost:3005/performance/api/fetchSpms', {
@@ -82,8 +81,8 @@ export function Update () {
 
 
     function addForm () {
-        dispatch({ type : 'ADD FORM', payload : crypto.randomUUID()})
-    }
+        dispatch({ type : 'ADD FORM', payload : { id : crypto.randomUUID(), role : userRole }})
+    } 
 
     function computeFormAvg(form) {
         let count = 0;
@@ -138,17 +137,20 @@ export function Update () {
     }
 
     async function update() {
-        
+        console.log(state.userData)
+        console.log(state.request)
+        console.log(state.ratings)
+
         const choice = confirm(" Are you sure you want to update performance? ")
 
         if (choice) {
             const response = await updatePerformance({
-                performance : state.request,
+               performance : state.request,
                 ratings : state.ratings
                 }, accessToken, setAccessToken)
 
             if (!response.success) { 
-                return alert(response.message)
+                 return alert(response.message)
             }
             navigate("/view")
         }        
@@ -167,6 +169,7 @@ export function Update () {
                                 computeAvgRating={computeAvgRating}
                                 dispatch={dispatch}
                                 form={form}
+                                role={userRole}
                                 key={form.id}
                             />
                         )

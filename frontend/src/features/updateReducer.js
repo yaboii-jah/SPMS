@@ -61,35 +61,32 @@ export function reducer(state, action) {
     let requestCopy = state.request.map(req => (
         {...req}
     ))
+  
+    let newForm = {
+        key_perf : "",
+        actual_accomp : "",
+        succes_indic : "",
+        category : "strat_obj",
+        quality : 0,
+        efficiency : 0,
+        timeliness : 0,
+        avg_per_form : "",
+        id: action.payload.id
+    }
+
 
     switch (action.type) {
         case "ADD FORM" : 
+            if (action.payload.role === 'OPCR' || action.payload.role === 'DPCR') {
+                newForm['alloted_budget'] = "",
+                newForm['division_individuals_accountable'] = ""
+            }
+
             return {
                 ...state,
-                userData : [...state.userData, {
-                    key_perf : "",
-                    actual_accomp : "",
-                    succes_indic : "",
-                    category : "strat_obj",
-                    quality : 0,
-                    efficiency : 0,
-                    timeliness : 0,
-                    avg_per_form : "",
-                    id: action.payload
-                }],
+                userData : [...state.userData, newForm],
 
-                request : [...state.request, {
-                    action : "create",
-                    key_perf : "",
-                    actual_accomp : "",
-                    succes_indic : "",
-                    category : "strat_obj",
-                    quality : 0,
-                    efficiency : 0,
-                    timeliness : 0,
-                    avg_per_form : "",
-                    id: action.payload
-                }]
+                request : [...state.request, {...newForm, ['action'] : "create"}]
             }
 
         case "DELETE FORM" : {

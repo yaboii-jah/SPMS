@@ -20,7 +20,7 @@ export function View() {
     let [unplanned, setUnplanned] = useState([])
     let [userRatings, setRatings] = useState({})
     let [user, setUser] = useState({})
-    const { accessToken, setAccessToken } = useAuth()
+    const { accessToken, setAccessToken, userRole } = useAuth()
     
     useEffect(() => {
         async function fetchUserData (token = accessToken)  {
@@ -127,26 +127,26 @@ export function View() {
   return (
     <>
     <div className='form-container'> 
-      <div className="view-agency">
-          <img className="view-agency-logo" src={logo}/>
-          <strong className="view-agency-name">Presidential Commision on Good Government</strong>
-      </div>
+        <div className="view-agency">
+            <img className="view-agency-logo" src={logo}/>
+            <strong className="view-agency-name">Presidential Commision on Good Government</strong>
+        </div>
 
-      <div className="ipcr-form"> 
-          <div className="view-ipcr-container">
-              <h4>INDIVIDUAL PERFORMANCE COMMITMENT AND REVIEW FORM (IPCR)</h4>
-              <p className="commitment-text">
-                  I, <strong style={{textDecoration : "underline"}}>{`${user.first_name} ${user.middle_name ? `${user.middle_name[0]}. ` : " "}${user.last_name}`}</strong>, of the  
-                   <strong style={{textDecoration : "underline"}}>{` ${user.department}`}</strong> commit to deliver and agree to be 
-                  rated on the attainment of the following targets in accordance with the indicated measures for the period 
-                  <strong style={{textDecoration : "underline"}}> July to December 31, 2025.</strong>
-              </p>
-          </div>
-
+        <div className="ipcr-form">    
+            <div className="view-ipcr-container">
+                <h4> {userRole === 'IPCR' ? 'INDIVIDUAL' : userRole === 'DPCR' ? 'DIVISION' : 'OFFICE'} PERFORMANCE COMMITMENT AND REVIEW FORM ({userRole})</h4>
+                <p className="commitment-text">
+                    I, <strong style={{textDecoration : "underline"}}>{`${user.first_name} ${user.middle_name ? `${user.middle_name[0]}. ` : " "}${user.last_name}`}</strong> of the  
+                    <strong style={{textDecoration : "underline"}}>{` ${user.department}`}</strong> commit to deliver and agree to be 
+                    rated on the attainment of the following targets in accordance with the indicated measures for the period 
+                    <strong style={{textDecoration : "underline"}}> July to December 31, 2025.</strong>
+                </p>
+            </div> 
+            
           <div className="view-signature-section">
               <div className="view-signature-block">
               <div className="view-signature-line"></div>
-              <div className="view-label">Employee</div>
+              <div className="view-label">{userRole === 'IPCR' ? 'Employee' : userRole === 'DPCR' ? 'OIC/Division Chief/Section Head' : 'Director'}</div>
               <div className="view-date-row">
                   Date: <strong style={{textDecoration : "underline"}}>Feb 05, 2025.</strong>
               </div>
@@ -161,14 +161,14 @@ export function View() {
                   <th style={{backgroundColor: "rgb(224, 224, 224)"}}>Date</th>
               </tr>
               <tr>
-                  <td style={{textAlign: "center"}}>{user.supervisor_division_chief ? user.supervisor_division_chief.toUpperCase() : ""}</td>
+                  <td style={{textAlign: "center"}}>{userRole === 'IPCR' ? user.supervisor_division_chief : userRole === 'DPCR' ? user.office_director : user.commissioner}</td>
                   <td rowSpan={2} style={{textAlign: "center"}}>Feb 26, 2026</td>
-                  <td style={{textAlign: "center"}}>{user.office_director ? user.office_director.toUpperCase() : ""}</td>
+                  <td style={{textAlign: "center"}}>{userRole === 'IPCR' ? user.office_director : userRole === 'DPCR' ? user.commissioner : user.chairperson}</td>
                   <td rowSpan={2} style={{textAlign: "center"}}>Feb 26, 2026</td>
               </tr>
               <tr>
-                  <td style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Immediate Supervisor/Division Chief</td>
-                  <td style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Head of Office/Director</td>
+                  <td style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>{userRole === 'IPCR' ? 'Immediate Supervisor/Division Chief' : userRole === 'DPCR' ? 'Director' : 'Commissioner In-charge'}</td>
+                  <td style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>{userRole === 'IPCR' ? 'Head Of Office/Director' : userRole === 'DPCR' ? 'Commissioner In-charge' : 'Chairperson'}</td>
               </tr>
               <tr>
                   <td colSpan={4} style={{backgroundColor: "rgb(224, 224, 224)"}}>PART 1: Evaluation</td>
@@ -178,14 +178,16 @@ export function View() {
           <table className="view-table">
               <tr>
                   <th colSpan={2} style={{backgroundColor: "rgb(201, 201, 201)"}}>To be accomplished During Planning Phase</th>
-                  <th colSpan={6} style={{backgroundColor: "rgb(201, 201, 201)"}}>To be accomplished During Planning Phase</th>
-              </tr>
+                  <th colSpan={8} style={{backgroundColor: "rgb(201, 201, 201)"}}>To be accomplished During Planning Phase</th>
+              </tr> 
               <tr>
                   <td rowSpan={2} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Key Performance Area(KPA)/Office <br/> Performance Scorecard</td>
                   <td rowSpan={2} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Success Indicators <br/> (TARGETS+MEASURES)</td>
                   <td rowSpan={2} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Actual Accomplishments</td>
+                  <td rowSpan={2} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Alloted Budget</td>
+                  <td rowSpan={2} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Division / Individuals Accountable</td>
                   <td colSpan={4} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Ratings</td>
-                  <td colSpan={2} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Remarks</td>
+                  <td colSpan={2} rowSpan={2} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Remarks</td>
               </tr>
               <tr style={{textAlign: "center"}}>
                   <td style={{padding: 10, paddingLeft: 15, paddingRight: 15, borderWidth: 2}}>Q</td>
@@ -196,6 +198,8 @@ export function View() {
 
               <tr>
                   <td style={{fontWeight: "bold"}}>STRATEGIC OBJECTIVES</td>
+                  <td></td>
+                  <td></td>
                   <td></td>
                   <td></td>
                   <td></td>
@@ -223,6 +227,8 @@ export function View() {
                   <td style={{backgroundColor: "rgb(224, 224, 224)"}}></td>
                   <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
                   <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
+                   <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
+                  <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
               </tr>
    
                 {core_sup.map(perf => {
@@ -243,6 +249,8 @@ export function View() {
                   <td style={{backgroundColor: "rgb(224, 224, 224)"}}></td>
                   <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
                   <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
+                  <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
+                  <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
               </tr>
                
                {unplanned.map(perf => {
@@ -256,7 +264,7 @@ export function View() {
 
               <tr>
                   <td colSpan={2}></td>
-                  <td colSpan={4} style={{backgroundColor: "rgb(221, 221, 221)", textAlign: "center"}}>Average Rating</td>
+                  <td colSpan={6} style={{backgroundColor: "rgb(221, 221, 221)", textAlign: "center"}}>Average Rating</td>
                   <td style={{backgroundColor: "rgb(248, 248, 248)", fontWeight: "bold"}}>{String(userRatings.avg_rating).padEnd(4, '0')}</td>
                   <td></td>
               </tr>
@@ -348,7 +356,7 @@ export function View() {
                   <td style={{backgroundColor: "rgb(245, 245, 245)", textAlign: "center"}}>Head of Office / Director</td>
               </tr>
           </table>
-      </div>
+        </div>
 
       
       <button className='print-btn' onClick={() => window.print()}>PRINT</button>

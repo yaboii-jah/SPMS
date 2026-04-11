@@ -27,7 +27,7 @@ export async function addPerformance (performance, user_id, tx = prisma) {
             }
          }
 
-         await prisma.ratings.upsert({ // this part wont update but it doesnt cause errors
+         await prisma.ratings.upsert({
             where: { rating_id: rating_id},
             update: performance['ratings'],
             create: performance['ratings'],

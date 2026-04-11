@@ -9,11 +9,11 @@ import { useAuth } from '../contexts/auth/useAuth'
 
 export function Add () {
     const [state, dispatch] = useReducer(reducer, initialState);
-    const { accessToken, setAccessToken } = useAuth()
+    const { accessToken, setAccessToken, userRole } = useAuth()
     const navigate = useNavigate()
 
     function addForm () {
-        dispatch({ type : 'ADD FORM'})
+        dispatch({ type : 'ADD FORM', payload : userRole})
     }
 
     function computeFormAvg(form) {
@@ -71,13 +71,14 @@ export function Add () {
     async function submitPerformance () {
         console.log(state.ratings)
         console.log(state.userData)
+        if ( state.userData.length === 0) return alert('Please add a form')
         const choice = confirm(" Are you sure you want to add performance? ")
 
         if (choice) {
             const response = await addPerformance({
                 performance : state.userData,
                 ratings : state.ratings
-                }, accessToken, setAccessToken)
+             }, accessToken, setAccessToken)
 
             if (!response.success) { 
                 return alert(response.message)
@@ -85,7 +86,6 @@ export function Add () {
 
             navigate("/view")
         }
-      
     }
     
     return (
@@ -103,6 +103,7 @@ export function Add () {
                                 computeAvgRating={computeAvgRating}
                                 dispatch={dispatch}
                                 form={form}
+                                role={userRole}
                                 key={form.id}
                             />
                         )

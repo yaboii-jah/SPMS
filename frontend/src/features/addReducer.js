@@ -1,15 +1,5 @@
 export const initialState = {
-    userData : [{
-        key_perf : "",
-        actual_accomp : "",
-        succes_indic : "",
-        category : 'strat_obj',
-        quality : 0,
-        efficiency : 0,
-        timeliness : 0,
-        avg_per_form : "",
-        id: crypto.randomUUID()
-    }],
+    userData : [],
     
     ratings : {
         avg_rating : 0,
@@ -43,21 +33,28 @@ export function reducer(state, action) {
         {...data}
     ))
 
+    let newForm = {
+        key_perf : "",
+        actual_accomp : "",
+        succes_indic : "",
+        category : "strat_obj",
+        quality : 0,
+        efficiency : 0,
+        timeliness : 0,
+        avg_per_form : "",
+        id: crypto.randomUUID()
+    }
+
     switch (action.type) {
         case "ADD FORM" : 
+            if (action.payload === 'OPCR' || action.payload === 'DPCR') {
+                newForm['alloted_budget'] = "",
+                newForm['division_individuals_accountable'] = ""
+            }
+        
             return {
                 ...state,
-                userData : [...state.userData, {
-                    key_perf : "",
-                    actual_accomp : "",
-                    succes_indic : "",
-                    category : "strat_obj",
-                    quality : 0,
-                    efficiency : 0,
-                    timeliness : 0,
-                    avg_per_form : "",
-                    id: crypto.randomUUID()
-                }]
+                userData : [...state.userData, newForm]
             }
 
         case "DELETE FORM" : {

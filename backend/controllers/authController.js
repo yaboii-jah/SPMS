@@ -39,7 +39,7 @@ export async function logIn (req, res) {
     sameSite: "None"
   });
 
-  res.status(200).send(new successResponse(true, token.accessToken, 'User Successfully Logged in'))
+  res.status(200).send(new successResponse(true, { token: token.accessToken, role : result.data.role}, 'User Successfully Logged in'))
 }
 
 export function logout () {
@@ -83,7 +83,7 @@ export async function refresh(req, res) {
       { expiresIn: "15m" }
     );
 
-    res.send(new successResponse(true, newAccessToken, "Refresh token successfully refreshed"));
+    res.send(new successResponse(true, { token : newAccessToken, role : decoded.role }, "Refresh token successfully refreshed"));
   } catch(error) {
     console.error(error)
     res.status(500).send(new errorResponse(false, "Internal server error", 500))

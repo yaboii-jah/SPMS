@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import { refresh } from "../api/refresh";
 
 const ProtectedRoute = ({ children }) => {
-  const { accessToken, setAccessToken } = useAuth();
+  const {  setAccessToken, setUserRole } = useAuth();
   const [loading, setLoading] = useState(true);
   const [isValid, setIsValid] = useState(false);
 
   useEffect(() => {
     const verifyToken = async () => {
       // If no token in state, try refreshing from backend
-      const result = await refresh(setAccessToken);
+      const result = await refresh(setAccessToken, setUserRole);
 
       if (result.success) {
         setIsValid(true); // token is valid
@@ -23,19 +23,19 @@ const ProtectedRoute = ({ children }) => {
     };
 
     verifyToken();
-  }, [setAccessToken]);
+  }, [setAccessToken, setUserRole]);
 
-  // 1️⃣ Show a loading state while verifying token
+  // Show a loading state while verifying token
   if (loading) {
     return <div>Loading...</div>; // Or a spinner
   }
 
-  // 2️⃣ Redirect to login if token is invalid
+  // Redirect to login if token is invalid
   if (!isValid) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login"  replace />;
   }
 
-  // 3️⃣ Otherwise render protected content
+  // Otherwise render protected content
   return children;
 };
 

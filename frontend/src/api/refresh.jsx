@@ -1,6 +1,6 @@
 import { successResponse, errorResponse } from "../utils/responseFormat"
 
-export async function refresh (setAccessToken) {
+export async function refresh (setAccessToken, setUserRole) {
   try {
     const result = await fetch('http://localhost:3005/auth/api/refresh', {
       method : 'POST',
@@ -16,7 +16,8 @@ export async function refresh (setAccessToken) {
       return new errorResponse(false, response.message)
     }
 
-    setAccessToken(response.data)
+    setAccessToken(response.data.token)
+    setUserRole(response.data.role)
 
     return new successResponse(true, response.data, response.message)
   } catch (error) {

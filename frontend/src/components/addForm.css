@@ -45,6 +45,11 @@
    border-radius: 10px;
 }
 
+.additional {
+    display: flex;
+    gap: 10px;
+}
+
 .bottom {
     display: flex;
     gap: 10px; 

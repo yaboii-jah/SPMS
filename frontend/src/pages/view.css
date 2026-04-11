@@ -30,12 +30,12 @@
 
 .view-agency-name {
     font-weight: bold;
-    font-size: 18px;
+    font-size: 16px;
     margin-left: 10px;
 }
 
 .view-ipcr-container {
-    font-size: 14px;
+    font-size: 12px;
     text-align: center;
     line-height: 1.8;
     margin: 20px 0;
@@ -62,7 +62,7 @@
 }
 
 .view-label {
-    font-size: 0.9em;
+    font-size: 12px;
     margin-bottom: 10px;
 }
 
@@ -74,7 +74,7 @@
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 15px;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .view-table th,
@@ -101,7 +101,7 @@
     border: 1px solid black;
     padding: 6px;
     text-align: center;
-    font-size: 13px;
+    font-size: 12px;
     background-color: rgb(245, 245, 245);
 }
 
@@ -124,7 +124,7 @@
 @media print {
     .form-container {
         width: 260mm;
-        min-height: 297mm;
+        min-height: 297mm   ;
         padding: 20px;
     }
     .print-button {
