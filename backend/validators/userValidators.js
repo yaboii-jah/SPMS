@@ -17,7 +17,6 @@ export const intialValidators = {
       .trim()
       .notEmpty().withMessage('No Value Provided on Lastname')
       .isString().withMessage('Lastname must be a string')
-      .isAlpha('en-US', { ignore : ['-', "'"]} )
     ,
 
   department :
@@ -34,7 +33,6 @@ export const intialValidators = {
       .trim()
       .notEmpty().withMessage('No Value Provided on Middlename')
       .isString().withMessage('Middlename must be a string')
-      .isAlpha('en-US', { ignore : ['-', "'"]} )
     ,
 
   username : 
@@ -62,8 +60,6 @@ export const intialValidators = {
 
 function additionalValidator (role) {
   const addedValidators = {}
-
-  console.log(role)
 
   if ( role === 'IPCR' || role === 'DPCR') {
     addedValidators['office_director'] = 
@@ -138,6 +134,7 @@ export async function logInValidator (req, res, next) {
 export async function updateValidator (req, res, next) {
   const required = {...intialValidators, ...additionalValidator(req.user.role)} 
   const fields = Object.keys(req.body);
+  console.log(fields)
   
   const validators = []
 
@@ -148,6 +145,8 @@ export async function updateValidator (req, res, next) {
   for (const field of fields) {
     validators.push(required[field])
   }
+
+  console.log(validators.length)
   
   for (const validator of validators) {
     await validator.run(req)

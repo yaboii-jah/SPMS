@@ -69,8 +69,6 @@ export function Add () {
     }
 
     async function submitPerformance () {
-        console.log(state.ratings)
-        console.log(state.userData)
         if ( state.userData.length === 0) return alert('Please add a form')
         const choice = confirm(" Are you sure you want to add performance? ")
 
@@ -89,11 +87,9 @@ export function Add () {
     }
     
     return (
-        <>
+        <div className='add-container'>
             <title>Add SPMS</title>
-            
-            <Header/>
-
+        
             <div className="form">
                 {
                     Array.isArray(state.userData) && state.userData.map(form => {
@@ -109,13 +105,12 @@ export function Add () {
                         )
                     }) || ''
                 } 
-                <button className='add-more-btn' onClick={addForm}>Add more</button>
                 <div className='btns'> 
-                    <div>
+                    <div className='avg-rating'>
                         <p>Average Rating </p>
-                        <p>{state.ratings['avg_rating']}</p>
+                        <p>{String(state.ratings['avg_rating'])}</p>
                     </div>
-                    <button className='submit-btn' onClick={submitPerformance}>Submit</button>
+                    <button className='add-more-btn' onClick={addForm}>ADD FORM</button>
                 </div>
             
                 <div className='rating-tables'>  
@@ -158,7 +153,7 @@ export function Add () {
                         </tr>
                     </table>
 
-                    <table>
+                    <table className='overall-rating'>
                         <tr>
                             <th>Total Overall Rating</th>
                             <td>{String(state.ratings.overall_rating)}</td>
@@ -168,9 +163,9 @@ export function Add () {
                             <td>{state.ratings.adjective_rating}</td>
                         </tr>
                     </table>
+                    <button className='submit-btn' onClick={submitPerformance}>SUBMIT</button>
                 </div>
             </div>
-        </>
-
+        </div>
     )
 }

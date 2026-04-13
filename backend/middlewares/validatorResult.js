@@ -16,5 +16,7 @@ export function validationResultChecker(req, res, next) {
     return acc;
   }, {}); 
 
+  console.log(formattedErrors)
+
   return res.status(400).send(new errorResponse(false, formattedErrors, 'Bad Request'))
 }

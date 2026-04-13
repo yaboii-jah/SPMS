@@ -1,19 +1,31 @@
-
-.form-container {
+.view-container {
     display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     border: none;
-    width: 240mm;
+    gap: 15px;       
+    width: 260mm;                                                                  
 }
 
 .ipcr-form {
     display: flex;
-    flex-direction: column;
+    flex-direction: column;     
     min-height: 297mm; 
     border: 2px solid black;
     padding: 25px;
     margin: 0 auto;
-    box-sizing: border-box;
+    box-sizing: border-box; 
     font-family: Arial, sans-serif;
+    width: 100%;
 }
 
 .view-agency {
@@ -109,7 +121,6 @@
     width: 100%;
     height: 40px;
     border: none;
-    border-radius: 8px;
     font-weight: bold;
     background-color: black;
     color: white;

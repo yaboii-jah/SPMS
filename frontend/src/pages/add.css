@@ -1,42 +1,77 @@
+.add-container, .update-container{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
 .form {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 750px;  
+    width: 1000px;
 }
 
 .add-more-btn, .submit-btn {
    height: 40px;
    border-radius: 8px;
-   margin-top: 15px;
-   width: 80px;
+   width: 100px;
 }
 
 .add-more-btn {
     width: 100%;
+    background-color: #1c2120;
+    border: none;
+    color: white;
+    font-weight: bold;
+    letter-spacing: 4px;
+    cursor: pointer;
+}
+
+.add-more-btn:hover {
+    opacity: 0.9;
+}
+
+.submit-btn {
+    background-color: black;
+    border: none;
+    color: white;
+    font-weight: bold;
+    letter-spacing: 4px;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    opacity: 0.9;
 }
 
 .btns {
     display: flex;
-    width: 100%;
-    justify-content: space-between;
     align-items: center;
+    width: 100%;
+    gap: 20px;
+    justify-content: space-between;
+    margin-top: 20px;
 }
 
 .btns div {
     display: flex;
-    gap: 15px;
+    flex-direction: column;
+    align-items: center;
+    width: 150px;
+    height: 100%;
+    border-radius: 8px;
+    border: 2px solid black;
 }
 
 .rating-tables {
     display: flex;
     flex-direction: column;
+    align-items: end;
     width: 100%;
     gap: 10px;
 }
 
 .rating {
-    margin-top: 10px;
+    margin-top: 20px;
     width: 100%;
     gap: 20px;
 }
@@ -44,6 +79,10 @@
 .assigned_weight {
     text-align: center;
     border: none;
+}
+
+.overall-rating {
+    width: 100%;
 }
 
 table, th, td {

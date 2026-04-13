@@ -42,6 +42,7 @@ export function reducer(state, action) {
         efficiency : 0,
         timeliness : 0,
         avg_per_form : "",
+        remarks : "",
         id: crypto.randomUUID()
     }
 

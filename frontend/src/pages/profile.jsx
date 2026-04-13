@@ -1,39 +1,77 @@
 import { useEffect, useState } from 'react'
 import { Header } from '../components/header'
+import { useAuth } from '../contexts/auth/useAuth'
+import { refresh } from '../api/refresh'
+import { EditableField } from '../components/EditableField'
+import './profile.css'
 
 export function Profile () {
+    const { accessToken, setAccessToken } = useAuth()
     const [userinfo, setUserInfo] = useState({})
 
     useEffect(() => {
-        async function fetchUserDetails () {    
-            const data = await fetch('http://localhost:3005/auth/api/fetchUser', {
-                method : 'GET',
-                headers : {
-                    "Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiSVBDUiIsImlhdCI6MTc3NTMwNjExNSwiZXhwIjoxNzc1MzkyNTE1fQ.q_GsLU5NGzWgzT_dqX84wgIGHRcv_MyZBthaTjgS-do`,
-                    "Content-Type" : "application/json"
+        async function fetchUserDetails (token = accessToken) {
+            const res = await fetch('http://localhost:3005/auth/api/fetchUser', {
+                headers: {
+                    Authorization: `Bearer ${token}`
                 }
             })
 
-            const result = await data.json()
+            const result = await res.json()
+
+            if (result.error === 403) {
+                const refreshResult = await refresh(setAccessToken)
+                if (!refreshResult.success) return
+                return fetchUserDetails(refreshResult.data)
+            }
+
             setUserInfo(result.data)
         }
 
         fetchUserDetails()
-    }, [])
+    }, [accessToken])
+
+    function handleChange(field, value) {
+        setUserInfo(prev => ({
+            ...prev,
+            [field]: value
+        }))
+    }
+
+    async function handleSave(field, value) {
+        console.log(field)
+        console.log(value)
+        try {
+            const res = await fetch(`http://localhost:3005/auth/api/update/${userinfo.user_id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`
+                },
+                body: JSON.stringify({ [field]: value })
+            })
+
+            const result = await res.json()
+            return result.success
+        } catch {
+            return false
+        }
+    }
 
     return (
         <>
-            <title>Profile</title>    
-            <Header/>
+            <title>Profile</title>
 
-            <div>
-                <p>{userinfo.first_name}</p>
-                <p>{userinfo.last_name}</p>
-                <p>{userinfo.middle_name}</p>
-                <p>{userinfo.supervisor_division_chief}</p>
-                <p>{userinfo.office_director}</p>
-                <p>{userinfo.role}</p>
-                <button>Update Information</button>
+            <div className="profile-container">
+                <div className="profile-card">
+                    <h2 className="profile-title">Profile</h2>
+
+                    <EditableField label="First Name" field="first_name" value={userinfo.first_name} onChange={handleChange} onSave={handleSave} />
+                    <EditableField label="Last Name" field="last_name" value={userinfo.last_name} onChange={handleChange} onSave={handleSave} />
+                    <EditableField label="Supervisor" field="supervisor_division_chief" value={userinfo.supervisor_division_chief} onChange={handleChange} onSave={handleSave} />
+                    <EditableField label="Director" field="office_director" value={userinfo.office_director} onChange={handleChange} onSave={handleSave} />
+                    <EditableField label="Role" field="role" value={userinfo.role} onChange={handleChange} onSave={handleSave} />
+                </div>
             </div>
         </>
     )
