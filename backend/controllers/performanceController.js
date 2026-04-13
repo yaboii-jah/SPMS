@@ -1,4 +1,4 @@
-import { addPerformance, dynamicQuery, fetchUserData, fetchUserRatings } from "../services/performanceServices.js";
+import { addPerformance, dynamicQuery, fetchUserData, fetchUserRatings, submitPerformance } from "../services/performanceServices.js";
 import { successResponse, errorResponse } from "../utils/responseFormat.js";
 import { errorHandler } from "../utils/asyncErrorHandler.js";
 
@@ -44,4 +44,14 @@ export async function fetchRatings (req, res) {
 
 export function verifiedToken (req, res) {
     res.send(new successResponse(true, null, 'Token successfully validated'))
+}
+
+export async function submit(req, res) {
+    const result = await submitPerformance(req.user.user_id)
+
+    if (!result.success) {
+        return res.status(result.error).send(new errorResponse(false, result.message, result.error))
+    }
+
+      res.status(200).send(new successResponse(true, null, result.message))
 }

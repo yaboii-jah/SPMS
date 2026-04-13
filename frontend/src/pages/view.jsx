@@ -5,6 +5,7 @@ import { UserPerformance } from '../components/userPerformance'
 import { useAuth } from '../contexts/auth/useAuth'
 import { refresh } from '../api/refresh'
 import { errorResponse } from "../utils/responseFormat";
+import { formatDate } from '../utils/formatDate.js'
 
 // --- needed todo ---
 //  - date form was added
@@ -22,6 +23,7 @@ export function View() {
     let [user, setUser] = useState({})
     const { accessToken, setAccessToken, userRole } = useAuth()
     
+    console.log(user)
     useEffect(() => {
         async function fetchUserData (token = accessToken)  {
             let stratCopy = []
@@ -99,8 +101,6 @@ export function View() {
     
             const user_result = await user.json()
 
-            console.log(user_result)
-
             if (user_result.error === 403) {
                 const result = await refresh(setAccessToken)
     
@@ -148,7 +148,7 @@ export function View() {
                 <div className="view-signature-line"></div>
                 <div className="view-label">{userRole === 'IPCR' ? 'Employee' : userRole === 'DPCR' ? 'OIC/Division Chief/Section Head' : 'Director'}</div>
                 <div className="view-date-row">
-                    Date: <strong style={{textDecoration : "underline"}}>Feb 05, 2025.</strong>
+                    Date: <strong style={{textDecoration : "underline"}}>{user.created_at ? formatDate(user.created_at) : ""}</strong>
                 </div>
                 </div>
             </div>
@@ -161,10 +161,10 @@ export function View() {
                     <th style={{backgroundColor: "rgb(224, 224, 224)"}}>Date</th>
                 </tr>
                 <tr>
-                    <td style={{textAlign: "center"}}>{userRole === 'IPCR' ? user.supervisor_division_chief : userRole === 'DPCR' ? user.office_director : user.commissioner}</td>
-                    <td rowSpan={2} style={{textAlign: "center"}}>Feb 26, 2026</td>
+                    <td style={{textAlign: "center"}}>{userRole === 'IPCR' ? (user.supervisor_division_chief) : userRole === 'DPCR' ? user.office_director : user.commissioner}</td>
+                    <td rowSpan={2} style={{textAlign: "center"}}>{user.created_at ? formatDate(user.created_at) : ""}</td>
                     <td style={{textAlign: "center"}}>{userRole === 'IPCR' ? user.office_director : userRole === 'DPCR' ? user.commissioner : user.chairperson}</td>
-                    <td rowSpan={2} style={{textAlign: "center"}}>Feb 26, 2026</td>
+                    <td rowSpan={2} style={{textAlign: "center"}}>{user.created_at ? formatDate(user.created_at) : ""}</td>
                 </tr>
                 <tr>
                     <td style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>{userRole === 'IPCR' ? 'Immediate Supervisor/Division Chief' : userRole === 'DPCR' ? 'Director' : 'Commissioner In-charge'}</td>
@@ -178,14 +178,18 @@ export function View() {
             <table className="view-table">
                 <tr>
                     <th colSpan={2} style={{backgroundColor: "rgb(201, 201, 201)"}}>To be accomplished During Planning Phase</th>
-                    <th colSpan={8} style={{backgroundColor: "rgb(201, 201, 201)"}}>To be accomplished During Planning Phase</th>
+                    <th colSpan={6} style={{backgroundColor: "rgb(201, 201, 201)"}}>To be accomplished During Planning Phase</th>
                 </tr> 
                 <tr>
                     <td rowSpan={2} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Key Performance Area(KPA)/Office <br/> Performance Scorecard</td>
                     <td rowSpan={2} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Success Indicators <br/> (TARGETS+MEASURES)</td>
                     <td rowSpan={2} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Actual Accomplishments</td>
-                    <td rowSpan={2} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Alloted Budget</td>
-                    <td rowSpan={2} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Division / Individuals Accountable</td>
+                    { userRole !== 'IPCR' ?
+                        <>
+                            <td rowSpan={2} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Alloted Budget</td>
+                            <td rowSpan={2} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Division / Individuals Accountable</td>
+                        </> : ""
+                    }
                     <td colSpan={4} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Ratings</td>
                     <td colSpan={2} rowSpan={2} style={{backgroundColor: "rgb(224, 224, 224)", textAlign: "center", fontWeight: "bold"}}>Remarks</td>
                 </tr>
@@ -198,8 +202,12 @@ export function View() {
 
                 <tr>
                     <td style={{fontWeight: "bold"}}>STRATEGIC OBJECTIVES</td>
-                    <td></td>
-                    <td></td>
+                    { userRole !== 'IPCR' ?
+                        <>
+                            <td></td>
+                            <td></td>
+                        </> : ""
+                    }
                     <td></td>
                     <td></td>
                     <td></td>
@@ -213,6 +221,7 @@ export function View() {
                         return (
                             <UserPerformance 
                                 strategy={perf}
+                                role={userRole}
                                 key={perf.performance_id}
                             />
                         )
@@ -225,8 +234,12 @@ export function View() {
                     <td style={{backgroundColor: "rgb(224, 224, 224)"}}></td>
                     <td style={{backgroundColor: "rgb(224, 224, 224)"}}></td>
                     <td style={{backgroundColor: "rgb(224, 224, 224)"}}></td>
-                    <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
-                    <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
+                    { userRole !== 'IPCR' ?
+                        <>
+                            <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
+                            <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
+                        </> : ""
+                    }
                     <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
                     <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
                 </tr>
@@ -235,6 +248,7 @@ export function View() {
                         return (
                             <UserPerformance 
                                 strategy={perf}
+                                role={userRole}
                                 key={perf.performance_id}
                             />
                         )
@@ -249,14 +263,19 @@ export function View() {
                     <td style={{backgroundColor: "rgb(224, 224, 224)"}}></td>
                     <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
                     <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
-                    <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
-                    <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
+                    { userRole !== 'IPCR' ?
+                        <>
+                            <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
+                            <td style={{backgroundColor:"rgb(224, 224, 224)"}}></td>
+                        </> : ""
+                    }
                 </tr>
                 
                 {unplanned.map(perf => {
                         return (
                             <UserPerformance 
                                 strategy={perf}
+                                role={userRole}
                                 key={perf.performance_id}
                             />
                         )
@@ -264,7 +283,7 @@ export function View() {
 
                 <tr>
                     <td colSpan={2}></td>
-                    <td colSpan={6} style={{backgroundColor: "rgb(221, 221, 221)", textAlign: "center"}}>Average Rating</td>
+                    <td colSpan={userRole === 'IPCR' ? 4 : 6} style={{backgroundColor: "rgb(221, 221, 221)", textAlign: "center"}}>Average Rating</td>
                     <td style={{backgroundColor: "rgb(248, 248, 248)", fontWeight: "bold"}}>{String(userRatings.avg_rating).padEnd(4, '0')}</td>
                     <td></td>
                 </tr>
@@ -341,14 +360,14 @@ export function View() {
                 </tr>
                 <tr>
                     <td style={{textAlign: "center"}}>{`${user.first_name} ${user.middle_name ? `${user.middle_name[0]}. ` : " "}${user.last_name}`}</td>
-                    <td rowSpan={2} style={{textAlign: "center"}}>Feb 05, 2025</td>
+                    <td rowSpan={2} style={{textAlign: "center"}}>{user.created_at ? formatDate(user.created_at) : ""}</td>
                     <td style={{textAlign: "center"}}>
                         <p> I certify that i discussed my assessment of the performance with the <br/>employee</p>
                         <p style={{fontWeight: "bold", marginTop: 10}}>{user.supervisor_division_chief ? user.supervisor_division_chief.toUpperCase() : ""}</p>
                     </td>
-                    <td rowSpan={2} style={{textAlign: "center"}}>Feb 05, 2025</td>
+                    <td rowSpan={2} style={{textAlign: "center"}}>{user.created_at ? formatDate(user.created_at) : ""}</td>
                     <td style={{textAlign: "center", verticalAlign: "bottom", fontWeight: "bold"}}>{user.office_director ? user.office_director.toUpperCase() : ""}</td>
-                    <td rowSpan={2} style={{textAlign: "center"}}>Feb 05, 2025</td>
+                    <td rowSpan={2} style={{textAlign: "center"}}>{user.created_at ? formatDate(user.created_at) : ""}</td>
                 </tr>
                 <tr>
                     <td style={{backgroundColor: "rgb(245, 245, 245)", textAlign: "center"}}>Employee</td>

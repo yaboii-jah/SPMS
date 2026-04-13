@@ -2,15 +2,15 @@ export const initialState = {
     userData : [],
     
     ratings : {
-        avg_rating : 4.42,
+        avg_rating : 0.00,
         strat_obj_weight : 0.30,
         core_sup_weight : 0.70,
         unplanned_weight : 0.00,
-        strat_obj_final : 1.35,
-        core_sup_final : 3.06,
+        strat_obj_final : 0.00,
+        core_sup_final : 0.00,
         unplanned_final : 0.00,
-        overall_rating : 4.41,
-        adjective_rating : "VERY SATISFACTORY"
+        overall_rating : 0.00,
+        adjective_rating : ""
     },
 
     request : []

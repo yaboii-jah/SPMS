@@ -39,6 +39,8 @@ model performance {
   user_id                             Int
   avg_per_form                        String?  @db.VarChar(45)
   created_at                          DateTime @default(now()) @db.DateTime(0)
+  is_valid                            String?  @default("True") @db.VarChar(55)
+  is_submitted                        String?  @default("False") @db.VarChar(45)
 
   @@index([user_id], map: "user_id_idx")
 }
@@ -56,6 +58,8 @@ model ratings {
   adjective_rating String   @db.VarChar(50)
   user_id          Int
   created_at       DateTime @default(now()) @db.DateTime(0)
+  is_valid         String?  @default("True") @db.VarChar(45)
+  is_submitted     String?  @default("False") @db.VarChar(45)
 
   @@index([user_id], map: "user_id_idx")
 }

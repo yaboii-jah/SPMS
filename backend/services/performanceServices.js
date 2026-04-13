@@ -84,7 +84,9 @@ export async function fetchUserData (user_id) {
    try {
       const result = await prisma.performance.findMany({
          where : {
-            user_id
+            user_id,
+            is_valid : 'True',
+            is_submitted : 'False'
          }
       })
 
@@ -104,7 +106,9 @@ export async function fetchUserRatings (user_id) {
    try {
       const result = await prisma.ratings.findMany({
          where : {
-            user_id 
+            user_id,
+            is_valid : 'True',
+            is_submitted : 'False'
          }
       })
 
@@ -118,6 +122,45 @@ export async function fetchUserRatings (user_id) {
       return new errorResponse(false, "Internal server error", 500)
    }
    
+}
+
+export async function submitPerformance (user_id) {
+   try {
+      return await prisma.$transaction(async (tx)=> {
+         const perf_result = await tx.performance.updateMany({
+            where : {
+               user_id,
+               is_valid : 'True',
+               is_submitted : 'False'
+            },
+            data : {
+               is_valid : 'False',
+               is_submitted : 'True'
+            }
+         })
+
+         if (perf_result.count === 0 ) throw new Error('No performance data has been updated')
+
+         const rating_result = await tx.ratings.updateMany({
+            where : {
+               user_id,
+               is_valid : 'True',
+               is_submitted : 'False'
+            },
+            data : {
+               is_valid : 'False',
+               is_submitted : 'True'
+            }
+         })
+
+         if (perf_result.count === 0 ) throw new Error('No rating data has been updated')
+
+         return new successResponse(true, null, "Performance submitted successfully")
+      })
+   } catch (error) {
+      console.error(error)
+      return new errorResponse(false, "Internal server error", 500)
+   }
 }
 
 export async function dynamicQuery (data, user_id) {

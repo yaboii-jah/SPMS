@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { add, update, fetchSpms, fetchRatings} from "../controllers/performanceController.js";
+import { add, update, fetchSpms, fetchRatings, submit} from "../controllers/performanceController.js";
 import { bodyValidator } from "../middlewares/bodyValidator.js";
 import { verifyToken} from "../middlewares/userAuthenticate.js"
 import { performanceValidator, updateValidator } from "../validators/performanceValidators.js";
@@ -13,3 +13,4 @@ routes.post('/add', bodyValidator,     add) // add performanceValidator, validat
 routes.post('/update', bodyValidator,     update) // add performanceValidator, validationResultChecker later
 routes.get('/fetchSpms', fetchSpms)
 routes.get('/fetchRatings', fetchRatings)
+routes.post('/submit', submit)
