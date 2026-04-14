@@ -1,0 +1,66 @@
+.list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.user-submitted {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: white;
+    width: 1200px;
+    height: 550px;
+    border-radius: 10px;
+}
+
+.card-submitted {
+    display: flex;
+    justify-content: space-between;
+    border-radius: 8px;
+    height: 40px;
+}
+
+.submitted-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 10px;
+    border-radius: 8px;
+    height: 470px;
+    border: 1px solid black;
+    overflow-y: scroll;
+}
+
+.sum-submitted {
+    text-align: center;
+    align-content: center;
+    border-style: solid;
+    width: 250px;
+    border-radius: 8px;
+}
+
+.add-user {
+    border-radius: 8px;
+    width: 150px;
+    border: none;
+}
+
+.search-submitted {
+    width: 360px;
+    border-radius: 8px;
+}
+
+.user-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 30px;
+    border-radius: 5px;
+    flex-shrink: 0;
+    padding: 0px 10px;
+    border: 1px solid black;
+} 
+
+

@@ -7,14 +7,6 @@ import { refresh } from '../api/refresh'
 import { errorResponse } from "../utils/responseFormat";
 import { formatDate } from '../utils/formatDate.js'
 
-// --- needed todo ---
-//  - date form was added
-//  - period 
-//  - conditional process that check the user role after initial rendering that
-//    will dynamically render fields
-//  - resize the form, because i think it looks too long
-//  - make it responsive
-
 export function View() {
     let [strat_obj, setStrat] = useState([])
     let [core_sup, setCore] = useState([])
