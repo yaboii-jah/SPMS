@@ -16,7 +16,6 @@ export function View() {
     let [user, setUser] = useState({})
     const { accessToken, setAccessToken, userRole } = useAuth()
     
-    console.log(user)
     useEffect(() => {
         async function fetchUserData (token = accessToken)  {
             let stratCopy = []

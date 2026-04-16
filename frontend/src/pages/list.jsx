@@ -3,9 +3,11 @@ import { useAuth } from '../contexts/auth/useAuth'
 import { refresh } from '../api/refresh'
 import AdminSidebar from '../components/adminSidebar'
 import './list.css'
+import { useNavigate } from 'react-router-dom'
 
 export function List () {
-    const { accessToken, setAccessToken, setUserRole } = useAuth()
+    const navigate = useNavigate()
+    const { accessToken, setAccessToken, setUserRole, setData} = useAuth()
     const [ users, setUsers ] = useState()
     const [userPerformance, setUserPerformance] = useState({
         performance: [],
@@ -101,9 +103,13 @@ export function List () {
         })
     }, [search, userPerformance.ratings])
 
-    function view(user) {
-        console.log("View user:", user)
-        // later: navigate(`/user/${user.id}`)
+    function view() {
+       setData([
+            users,
+            userPerformance
+       ])
+        
+       navigate(`/viewSpms`)
     }
 
     return (
@@ -155,7 +161,7 @@ export function List () {
 
                                     <button
                                         className="view-btn"
-                                        onClick={() => view(user)}
+                                        onClick={() => view()}
                                     >
                                         View
                                     </button>

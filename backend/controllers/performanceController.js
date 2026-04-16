@@ -1,6 +1,5 @@
 import { addPerformance, dynamicQuery, fetchUserData, fetchUserRatings, submitPerformance, fetchPerformance } from "../services/performanceServices.js";
 import { successResponse, errorResponse } from "../utils/responseFormat.js";
-import { errorHandler } from "../utils/asyncErrorHandler.js";
 
 export async function add (req, res) {
     const result = await addPerformance(req.body, req.user.user_id)
