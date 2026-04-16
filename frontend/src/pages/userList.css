@@ -1,0 +1,65 @@
+.userlist {
+    display: flex;
+    height: 100vh;
+}
+
+.userlist-container {
+    max-width: 700px;
+    width: 100%;
+    margin: 20px auto;
+    padding: 10px;
+}
+
+/* top bar */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.search-input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.active-count {
+    font-size: 0.9rem;
+    color: #555;
+    white-space: nowrap;
+}
+
+/* list container */
+.list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* scrollbar (optional clean look) */
+.list-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.list-container::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}
+
+/* mobile */
+@media (max-width: 600px) {
+    .top-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .active-count {
+        text-align: right;
+    }
+}

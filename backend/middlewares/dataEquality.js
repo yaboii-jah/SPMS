@@ -5,7 +5,7 @@ import { errorResponse } from "../utils/responseFormat.js";
 export async function checkEquality (req, res, next) {
    const result = await errorHandler(() => prisma.users.findUnique({
         where : {
-            user_id : req.params.id
+            user_id : Number(req.params.id)
         }
    }))
   

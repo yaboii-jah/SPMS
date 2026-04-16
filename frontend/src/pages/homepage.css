@@ -44,3 +44,59 @@
     height: 100%;
     width: 100%;
 }
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .cards {
+        gap: 40px;
+        flex-wrap: wrap;
+        padding: 20px;
+    }
+
+    .btn-cards {
+        height: 200px;
+        width: 200px;
+        font-size: 22px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .cards {
+        gap: 25px;
+        flex-wrap: wrap;
+        padding: 20px;
+    }
+
+    .btn-cards {
+        height: 180px;
+        width: 180px;
+        font-size: 18px;
+        letter-spacing: 2px;
+    }
+
+    .homepage-icon {
+        height: 60px;
+        width: 60px;
+    }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+    .cards {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .btn-cards {
+        width: 90%;
+        height: 160px;
+        font-size: 16px;
+        border-radius: 18px;
+    }
+
+    .homepage-icon {
+        height: 50px;
+        width: 50px;
+    }
+}

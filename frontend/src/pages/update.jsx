@@ -1,6 +1,5 @@
 import '../pages/add.css'
 import { useEffect, useReducer} from 'react';
-import { Header } from '../components/header';
 import { UpdateForm } from '../components/updateForm';
 import { useNavigate } from 'react-router-dom'
 import { updatePerformance } from '../api/update';
@@ -8,7 +7,7 @@ import { initialState, reducer } from '../features/updateReducer'
 import { useAuth } from '../contexts/auth/useAuth'
 import { refresh } from '../api/refresh'
 import { errorResponse } from "../utils/responseFormat";
-
+import { UserHeader } from '../components/userHeader'
 
 export function Update () {
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -73,6 +72,8 @@ export function Update () {
                     ratings.data[0][rate] = parseFloat(ratings.data[0][rate])
                 }
             }
+
+            console.log(ratings)
 
             dispatch({ type : 'FETCH DATA', payload : {spms : updatedSpms, ratings : ratings.data[0] }})
         }
@@ -160,6 +161,7 @@ export function Update () {
     return (    
         <div className='update-container'>
             <title>Update</title>
+            <UserHeader />
             <div className='form'>
                 {
                     Array.isArray(state.userData) && state.userData.map(form => {
@@ -233,7 +235,7 @@ export function Update () {
                             <td>{state.ratings.adjective_rating}</td>
                         </tr>
                     </table>
-                    <button className='submit-btn' onClick={update}>SUBMIT</button>
+                    <button className='submit-btn' onClick={update}>UPDATE</button>
                 </div>
             </div>
         </div>

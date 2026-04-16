@@ -23,7 +23,7 @@ export async function updatePerformance (performance, token, setToken) {
                 return new errorResponse(false, result.message)
             }
 
-            const newToken = result.data;
+            const newToken = result.data.token;
 
             return await updatePerformance(performance, newToken, setToken);
         }

@@ -1,11 +1,11 @@
 import '../pages/add.css'
-import { Header } from '../components/header'
 import { AddForm } from '../components/addForm'
 import { useReducer } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { addPerformance} from '../api/add'
 import { initialState, reducer } from '../features/addReducer'
 import { useAuth } from '../contexts/auth/useAuth'
+import { UserHeader } from '../components/userHeader'
 
 export function Add () {
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -69,6 +69,7 @@ export function Add () {
     }
 
     async function submitPerformance () {
+        console.log(state)
         if ( state.userData.length === 0) return alert('Please add a form')
         const choice = confirm(" Are you sure you want to add performance? ")
 
@@ -89,7 +90,7 @@ export function Add () {
     return (
         <div className='add-container'>
             <title>Add SPMS</title>
-        
+            <UserHeader />
             <div className="form">
                 {
                     Array.isArray(state.userData) && state.userData.map(form => {

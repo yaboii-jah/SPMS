@@ -15,8 +15,7 @@ export async function refresh (setAccessToken, setUserRole) {
     if (!response.success) {
       return new errorResponse(false, response.message)
     }
-    console.log('Test')
-
+    
     setAccessToken(response.data.token)
     setUserRole(response.data.role)
 

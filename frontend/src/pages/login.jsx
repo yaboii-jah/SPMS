@@ -6,7 +6,7 @@ import '../pages/login.css'
 import logo from '../assets/PCGG-Logo.png'
 
 export function Login () {
-    const { accessToken, setAccessToken, setUserRole } = useAuth()
+    const { accessToken, setAccessToken, userRole, setUserRole } = useAuth()
     const Username = useRef(null)
     const Password = useRef(null)
 
@@ -14,7 +14,7 @@ export function Login () {
 
     useEffect(() => {
         if (accessToken) {
-            navigate("/homepage");
+            userRole !== 'ADMIN' ? navigate("/homepage") : navigate("/list")
         }
     }, [accessToken]);
 

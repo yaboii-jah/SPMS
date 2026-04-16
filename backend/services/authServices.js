@@ -12,8 +12,9 @@ export async function createUser (user) {
 }
 
 export async function updateUser (user_id, details) {
+    
     const result = await errorHandler ( () => prisma.users.update ({
-       where : { user_id },
+       where : {  user_id : Number(user_id) },
        data : details
     }))
 
@@ -36,6 +37,42 @@ export async function findUser (username) {
         return new errorResponse(false, "Internal server error", 500)
     }
 }
+
+export async function findUserById (user_id) {
+    try {
+        const result = await prisma.users.findUnique({
+            where : { user_id }
+        })
+        
+        if (!result) {
+            return new errorResponse(false, "User not Found", 404)
+        }
+
+        return new successResponse(true, result, "User successfully found")
+    } catch (error) {
+        console.error("Error finding user", error)
+        return new errorResponse(false, "Internal server error", 500)
+    }
+}
+
+export async function fetchUsers (username) {
+    try {
+        const result = await prisma.users.findMany({
+            where : { status : 'Active' }
+        })
+        
+        if (result.count === 0) {
+            return new errorResponse(false, "No User Found", 404)
+        }
+
+        return new successResponse(true, result, "Users successfully found")
+    } catch (error) {
+        console.error("Error finding user", error)
+        return new errorResponse(false, "Internal server error", 500)
+    }
+}
+
+
  
 export async function comparePassword (password, userPassword) {
     try {

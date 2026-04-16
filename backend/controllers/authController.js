@@ -1,6 +1,6 @@
 
 import { errorResponse, successResponse } from '../utils/responseFormat.js';
-import { createUser, updateUser, findUser, comparePassword, fetchUserDetails } from '../services/authServices.js';
+import { createUser, updateUser, findUser, comparePassword, fetchUserDetails, findUserById, fetchUsers } from '../services/authServices.js';
 import { generateAccessToken } from '../utils/generateToken.js';
 import { errorHandler } from '../utils/asyncErrorHandler.js';
 import jwt from 'jsonwebtoken'
@@ -42,12 +42,13 @@ export async function logIn (req, res) {
   res.status(200).send(new successResponse(true, { token: token.accessToken, role : result.data.role}, 'User Successfully Logged in'))
 }
 
-export function logout () {
-  
+export function logout (req, res) {
+  res.clearCookie("refreshToken");
+
+  return res.send(new successResponse(true, null, 'User successfully logout'))
 }
 
 export async function update (req, res) {
-  console.log(req.user)
   const result = await updateUser(req.params.id, req.body)
 
   if (!result.success) {
@@ -62,9 +63,29 @@ export async function fetchUser (req, res) {
 
   if (!result.success) {
     return res.status(result.error).send(new errorResponse(false, result.message, result.error))
+  }   
+
+  res.status(200).send(new successResponse(true, result.data, 'User Successfully Retrieved'))
+}
+
+export async function fetchUserByParamsID (req, res) {
+  const result = await findUserById(Number(req.params.id))
+
+  if (!result.success) {
+    return res.status(result.error).send(new errorResponse(false, result.message, result.error))
   } 
 
   res.status(200).send(new successResponse(true, result.data, 'User Successfully Retrieved'))
+}
+
+export async function fetchAllUsers (req, res) {
+  const result = await fetchUsers()
+
+  if (!result.success) {
+    return res.status(result.error).send(new errorResponse(false, result.message, result.error))
+  }   
+
+  res.status(200).send(new successResponse(true, result.data, 'Users Successfully Retrieved'))
 }
 
 export async function refresh(req, res) {

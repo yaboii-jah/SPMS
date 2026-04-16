@@ -109,6 +109,19 @@ export async function fetchUserRatings (user_id) {
             user_id,
             is_valid : 'True',
             is_submitted : 'False'
+         },
+         select: {
+            rating_id: true,
+            user_id: true,
+            avg_rating: true,
+            strat_obj_weight: true,
+            core_sup_weight: true,
+            unplanned_weight: true,
+            strat_obj_final: true,
+            core_sup_final: true,
+            unplanned_final: true,
+            overall_rating: true,
+            adjective_rating: true
          }
       })
 
@@ -216,4 +229,57 @@ export async function dynamicQuery (data, user_id) {
       return new errorResponse(false, "Internal server error", 500)
    }
 }
+
+export async function fetchPerformance () {
+   const now = new Date()
+
+   const startOfYear = new Date(now.getFullYear(), 0, 1)   // Jan 1
+   const endOfYear = new Date(now.getFullYear(), 11, 31, 23, 59, 59) // Dec 31
+
+   try {
+      return await prisma.$transaction(async (tx) => {
+         const ratings = await tx.ratings.findMany({
+            where: {
+                  is_submitted: 'True',
+                  is_valid: 'False',
+                  created_at : {
+                     gte: startOfYear,
+                     lte: endOfYear
+                  }
+            },
+            include: {
+                  users: true
+            }
+         })
+
+         if (ratings.count === 0) {
+            throw Error('No ratings retrieved')
+         }
+
+         const performance = await tx.performance.findMany({
+            where: {
+                  is_submitted: 'True',
+                  is_valid: 'False',
+                  created_at : {
+                     gte: startOfYear,
+                     lte: endOfYear
+                  }
+            }
+         })
+
+         if (performance.count === 0) {
+            throw Error('No performance retrieved')
+         }
+
+         return new successResponse(true, { ratings,
+            performance}, 'Performance retrieved successfully')
+      })
+   } catch (error) {
+      console.error(error)
+      return new errorResponse(false, "Internal server error", 500)
+   }
+
+}
+
+
 

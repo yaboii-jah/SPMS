@@ -1,41 +1,45 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from '../contexts/auth/useAuth';
+import { useAuth } from "../contexts/auth/useAuth";
 import { useEffect, useState } from "react";
 import { refresh } from "../api/refresh";
 
-const ProtectedRoute = ({ children }) => {
-  const {  setAccessToken, setUserRole } = useAuth();
+const ProtectedRoute = ({ children, allowedRoles }) => {
+  const { setAccessToken, userRole, setUserRole } = useAuth();
   const [loading, setLoading] = useState(true);
   const [isValid, setIsValid] = useState(false);
 
   useEffect(() => {
     const verifyToken = async () => {
-      // If no token in state, try refreshing from backend
       const result = await refresh(setAccessToken, setUserRole);
 
       if (result.success) {
-        setIsValid(true); // token is valid
+        setIsValid(true);
       } else {
-        setIsValid(false); // token invalid
+        setIsValid(false);
       }
 
-      setLoading(false); // verification finished
+      setLoading(false);
     };
 
     verifyToken();
   }, [setAccessToken, setUserRole]);
 
-  // Show a loading state while verifying token
   if (loading) {
-    return <div>Loading...</div>; // Or a spinner
+    return <div>Loading...</div>;
   }
 
-  // Redirect to login if token is invalid
   if (!isValid) {
-    return <Navigate to="/login"  replace />;
+    return <Navigate to="/login" replace />;
   }
 
-  // Otherwise render protected content
+  if (allowedRoles && !allowedRoles.includes(userRole)) {
+    if (["IPCR", "OPCR", "DPCR"].includes(userRole)) {
+      return <Navigate to="/homepage" replace />;
+    }
+
+    return <Navigate to="/list" replace />;
+  }
+
   return children;
 };
 

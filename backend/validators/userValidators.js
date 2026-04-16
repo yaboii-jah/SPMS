@@ -8,7 +8,6 @@ export const intialValidators = {
       .trim()
       .notEmpty().withMessage('No Value Provided on Firstname')
       .isString().withMessage('Firstname must be a string')
-      .isAlpha('en-US', { ignore : ['-', "'"]} )
     ,
 
   last_name : 
@@ -50,12 +49,23 @@ export const intialValidators = {
       .notEmpty().withMessage('Invalid Value on Password')
       .isString().withMessage('Password must be a string')
   ,   
+
   role : 
     body ('role')
       .exists().withMessage('role do not exist')
       .trim()
       .notEmpty().withMessage('Invalid Value on role')
       .isString().withMessage('role must be a string')
+  ,
+
+  status : 
+    body ('status')
+      .optional()
+      .exists().withMessage('status do not exist')
+      .trim()
+      .notEmpty().withMessage('Invalid Value on status')
+      .isString().withMessage('status must be a string')
+  ,
 }
 
 function additionalValidator (role) {
@@ -132,7 +142,7 @@ export async function logInValidator (req, res, next) {
 }
 
 export async function updateValidator (req, res, next) {
-  const required = {...intialValidators, ...additionalValidator(req.user.role)} 
+  const required = {...intialValidators, ...additionalValidator(req.body.role)} 
   const fields = Object.keys(req.body);
   console.log(fields)
   
@@ -160,7 +170,6 @@ export const routeParamsValidator = [
     .exists().withMessage('Please provide id')
     .trim()
     .isInt().withMessage('User ID must be integer')
-    .toInt().withMessage('Invalid value for User ID')
 ]
 
 

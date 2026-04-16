@@ -1,4 +1,4 @@
-import { addPerformance, dynamicQuery, fetchUserData, fetchUserRatings, submitPerformance } from "../services/performanceServices.js";
+import { addPerformance, dynamicQuery, fetchUserData, fetchUserRatings, submitPerformance, fetchPerformance } from "../services/performanceServices.js";
 import { successResponse, errorResponse } from "../utils/responseFormat.js";
 import { errorHandler } from "../utils/asyncErrorHandler.js";
 
@@ -34,7 +34,7 @@ export async function fetchSpms (req, res) {
 
 export async function fetchRatings (req, res) {
     const result = await fetchUserRatings(req.user.user_id)
-
+    
     if (!result.success) {
         return res.status(result.error).send(new errorResponse(false, result.message, result.error))
     }
@@ -54,4 +54,14 @@ export async function submit(req, res) {
     }
 
       res.status(200).send(new successResponse(true, null, result.message))
+}
+
+export async function fetchAllPerformance (req, res) {
+    const result = await fetchPerformance()
+
+    if (!result.success) {
+        return res.status(result.error).send(new errorResponse(false, result.message, result.error))
+    }
+
+      res.status(200).send(new successResponse(true, result.data, result.message))
 }

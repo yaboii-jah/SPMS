@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/auth/useAuth'
 import { refresh } from '../api/refresh'
 import { errorResponse } from "../utils/responseFormat";
 import { formatDate } from '../utils/formatDate.js'
+import { UserHeader } from '../components/userHeader'
 
 export function View() {
     let [strat_obj, setStrat] = useState([])
@@ -117,6 +118,8 @@ export function View() {
 
 
   return (
+    <>
+    <UserHeader />
     <div className='view-container'>
         <div className='container'> 
             <div className="view-agency">
@@ -131,7 +134,7 @@ export function View() {
                         I, <strong style={{textDecoration : "underline"}}>{`${user.first_name} ${user.middle_name ? `${user.middle_name[0]}. ` : " "}${user.last_name}`}</strong> of the  
                         <strong style={{textDecoration : "underline"}}>{` ${user.department}`}</strong> commit to deliver and agree to be 
                         rated on the attainment of the following targets in accordance with the indicated measures for the period 
-                        <strong style={{textDecoration : "underline"}}> July to December 31, 2025.</strong>
+                        <strong style={{textDecoration : "underline"}}> {`January to December 31, ${new Date().getFullYear()}`} </strong>
                     </p>
                 </div> 
                 
@@ -373,6 +376,6 @@ export function View() {
         <button className='print-btn' onClick={() => window.print()}>PRINT</button>
         </div>
     </div>
-
+    </>
   )
 }
